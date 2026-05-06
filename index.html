@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyClubHub — Sports Club Management Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:    #080f1e;
+    --navy2:   #0d1829;
+    --navy3:   #122038;
+    --blue:    #2b7fff;
+    --blue2:   #4f9aff;
+    --blue3:   #1a5fc8;
+    --slate:   #94a3b8;
+    --slate2:  #64748b;
+    --white:   #ffffff;
+    --off:     #e8edf5;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 68px;
+    background: rgba(8,15,30,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+  }
+  .logo-mark {
+    width: 38px; height: 38px; flex-shrink: 0;
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--white); letter-spacing: -.3px;
+  }
+  .logo-text span { color: var(--blue2); }
+  .nav-links {
+    display: flex; gap: 32px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 13px; color: var(--slate);
+    text-decoration: none; transition: color .2s;
+    font-weight: 400;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-right { display: flex; gap: 12px; align-items: center; }
+  .btn-ghost {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    color: var(--slate); background: none;
+    border: 1px solid rgba(255,255,255,.1);
+    padding: 7px 18px; border-radius: 8px;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-ghost:hover { color: var(--white); border-color: rgba(255,255,255,.25); }
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    color: var(--white); background: var(--blue);
+    border: none; padding: 8px 20px; border-radius: 8px;
+    cursor: pointer; transition: background .2s;
+  }
+  .btn-primary:hover { background: var(--blue2); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    padding: 120px 24px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    overflow: hidden;
+  }
+  .hero-bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(43,127,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43,127,255,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .hero-bg-glow {
+    position: absolute; top: -20%; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(43,127,255,.18) 0%, transparent 70%);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 500;
+    background: rgba(43,127,255,.12);
+    border: 1px solid rgba(43,127,255,.3);
+    color: var(--blue2);
+    padding: 5px 14px; border-radius: 99px;
+    margin-bottom: 28px;
+    animation: fadeUp .6s ease both;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue2);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -1.5px;
+    margin-bottom: 24px;
+    animation: fadeUp .6s .1s ease both;
+  }
+  .hero h1 em {
+    font-style: normal; color: var(--blue2);
+  }
+  .hero p {
+    font-size: 17px; line-height: 1.7;
+    color: var(--slate); max-width: 520px;
+    margin: 0 auto 40px;
+    animation: fadeUp .6s .2s ease both;
+  }
+  .hero-ctas {
+    display: flex; gap: 14px; justify-content: center;
+    animation: fadeUp .6s .3s ease both;
+  }
+  .cta-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500;
+    background: var(--blue); color: var(--white);
+    border: none; padding: 14px 32px;
+    border-radius: 10px; cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 0 32px rgba(43,127,255,.35);
+  }
+  .cta-primary:hover {
+    background: var(--blue2);
+    box-shadow: 0 0 48px rgba(43,127,255,.5);
+    transform: translateY(-1px);
+  }
+  .cta-secondary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500;
+    background: rgba(255,255,255,.05);
+    color: var(--slate); border: 1px solid rgba(255,255,255,.1);
+    padding: 14px 32px; border-radius: 10px;
+    cursor: pointer; transition: all .2s;
+  }
+  .cta-secondary:hover {
+    background: rgba(255,255,255,.08);
+    color: var(--white);
+  }
+  .hero-social-proof {
+    margin-top: 56px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    animation: fadeUp .6s .4s ease both;
+  }
+  .sports-pills {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  }
+  .sport-pill {
+    font-size: 11px; font-weight: 500;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    color: var(--slate); padding: 4px 12px; border-radius: 99px;
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 100px 24px; }
+  .section-inner { max-width: 1080px; margin: 0 auto; }
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: .12em;
+    color: var(--blue2); text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -.8px; margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 16px; color: var(--slate);
+    max-width: 500px; line-height: 1.7;
+  }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 16px; overflow: hidden;
+    margin-top: 64px;
+  }
+  .feature-card {
+    padding: 36px 32px;
+    background: var(--navy2);
+    transition: background .2s;
+  }
+  .feature-card:hover { background: var(--navy3); }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(43,127,255,.12);
+    border: 1px solid rgba(43,127,255,.2);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .feature-icon svg { width: 20px; height: 20px; }
+  .feature-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px; font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .feature-desc {
+    font-size: 14px; color: var(--slate); line-height: 1.65;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-bg { background: var(--navy2); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 40px; margin-top: 64px;
+  }
+  .step { position: relative; }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px; font-weight: 800;
+    color: rgba(43,127,255,.15);
+    line-height: 1; margin-bottom: 12px;
+  }
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .step-desc { font-size: 14px; color: var(--slate); line-height: 1.65; }
+
+  /* ── SPORTS ── */
+  .sports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px; margin-top: 56px;
+  }
+  .sport-card {
+    padding: 28px 20px; text-align: center;
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 12px; transition: all .2s;
+    cursor: default;
+  }
+  .sport-card:hover {
+    border-color: rgba(43,127,255,.3);
+    background: var(--navy3);
+    transform: translateY(-2px);
+  }
+  .sport-emoji { font-size: 32px; margin-bottom: 12px; }
+  .sport-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .sport-tag {
+    font-size: 11px; color: var(--slate2);
+  }
+
+  /* ── PRICING ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px; margin-top: 64px;
+  }
+  .pricing-card {
+    padding: 36px 32px;
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px; position: relative;
+  }
+  .pricing-card.featured {
+    border-color: var(--blue);
+    background: var(--navy3);
+  }
+  .pricing-badge {
+    position: absolute; top: -12px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px; font-weight: 600;
+    background: var(--blue); color: var(--white);
+    padding: 4px 14px; border-radius: 99px;
+    white-space: nowrap;
+  }
+  .pricing-tier {
+    font-size: 12px; font-weight: 600; letter-spacing: .1em;
+    color: var(--slate2); text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .pricing-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 46px; font-weight: 800;
+    line-height: 1; margin-bottom: 4px;
+  }
+  .pricing-price sup {
+    font-size: 22px; vertical-align: super; font-weight: 600;
+  }
+  .pricing-period {
+    font-size: 13px; color: var(--slate2); margin-bottom: 28px;
+  }
+  .pricing-features {
+    list-style: none; margin-bottom: 32px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .pricing-features li {
+    font-size: 14px; color: var(--slate);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .pricing-features li::before {
+    content: '';
+    width: 16px; height: 16px; border-radius: 50%;
+    background: rgba(43,127,255,.15);
+    border: 1px solid var(--blue);
+    flex-shrink: 0; margin-top: 1px;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 5l2.5 2.5L8 3' stroke='%232b7fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .pricing-cta {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    padding: 12px; border-radius: 8px;
+    cursor: pointer; transition: all .2s;
+    border: 1px solid rgba(255,255,255,.1);
+    background: none; color: var(--slate);
+  }
+  .pricing-cta:hover { background: rgba(255,255,255,.06); color: var(--white); }
+  .pricing-card.featured .pricing-cta {
+    background: var(--blue); color: var(--white); border-color: var(--blue);
+  }
+  .pricing-card.featured .pricing-cta:hover { background: var(--blue2); }
+
+  /* ── CTA BAND ── */
+  .cta-band {
+    background: var(--navy2);
+    border-top: 1px solid rgba(255,255,255,.06);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    text-align: center; padding: 80px 24px;
+  }
+  .cta-band h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800; letter-spacing: -.8px;
+    margin-bottom: 16px;
+  }
+  .cta-band p {
+    font-size: 16px; color: var(--slate); margin-bottom: 36px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 20px;
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .footer-links {
+    display: flex; gap: 24px; list-style: none;
+  }
+  .footer-links a {
+    font-size: 13px; color: var(--slate2);
+    text-decoration: none; transition: color .2s;
+  }
+  .footer-links a:hover { color: var(--slate); }
+  .footer-copy { font-size: 13px; color: var(--slate2); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SCROLLED NAV ── */
+  nav.scrolled {
+    background: rgba(8,15,30,0.97);
+    border-bottom-color: rgba(255,255,255,.1);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="logo">
+    <svg class="logo-mark" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 3L4 9.5V20C4 28.2 10.8 35.4 19 37C27.2 35.4 34 28.2 34 20V9.5L19 3Z" fill="#1a3a6e" stroke="#2b7fff" stroke-width="1.2"/>
+      <path d="M19 3L4 9.5V20C4 28.2 10.8 35.4 19 37C27.2 35.4 34 28.2 34 20V9.5L19 3Z" fill="url(#sg)" stroke="#2b7fff" stroke-width="1.2"/>
+      <defs>
+        <linearGradient id="sg" x1="19" y1="3" x2="19" y2="37" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#2563eb" stop-opacity=".6"/>
+          <stop offset="100%" stop-color="#1a3a6e" stop-opacity=".3"/>
+        </linearGradient>
+      </defs>
+      <path d="M13 19.5l4 4 8-8" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="logo-text">My<span>Club</span>Hub</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#sports">Sports</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-ghost">Sign in</button>
+    <button class="btn-primary">Start free trial</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-bg-glow"></div>
+  </div>
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Now live — Corduff Handball Club, Ireland
+  </div>
+  <h1>The platform that<br>runs your <em>club.</em></h1>
+  <p>Leagues, fixtures, bookings, knockouts and competitions — all connected. Built for Irish sports clubs. Priced fairly at €5 per player per year.</p>
+  <div class="hero-ctas">
+    <button class="cta-primary">Start your free trial</button>
+    <button class="cta-secondary">See how it works</button>
+  </div>
+  <div class="hero-social-proof">
+    <p style="font-size:12px;color:var(--slate2)">Works for any sport</p>
+    <div class="sports-pills">
+      <span class="sport-pill">Handball</span>
+      <span class="sport-pill">Tennis</span>
+      <span class="sport-pill">Padel</span>
+      <span class="sport-pill">Squash</span>
+      <span class="sport-pill">Badminton</span>
+      <span class="sport-pill">More coming</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <p class="section-label">Platform features</p>
+    <h2 class="section-title">Everything your club<br>actually needs</h2>
+    <p class="section-sub">Stop managing leagues in WhatsApp. Stop tracking results in spreadsheets. MyClubHub replaces the chaos.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2" stroke="#60a5fa" stroke-width="1.4"/><path d="M2 7h16" stroke="#60a5fa" stroke-width="1.4"/><path d="M6 2v2M14 2v2" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="feature-title">Court & alley bookings</h3>
+        <p class="feature-desc">Drag-and-drop calendar with real-time availability. Multi-book recurring sessions. Block courts for maintenance. SMS and email confirmations built in.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#60a5fa" stroke-width="1.4"/><path d="M10 6v4.5l3 2" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="feature-title">League management</h3>
+        <p class="feature-desc">Create divisions with custom groups. Auto-generate round-robin fixtures using the circle method. Live standings update as results come in.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 3L4 6v5c0 3.8 2.8 7.3 6 8 3.2-.7 6-4.2 6-8V6l-6-3Z" stroke="#60a5fa" stroke-width="1.4"/></svg>
+        </div>
+        <h3 class="feature-title">Knockout competitions</h3>
+        <p class="feature-desc">Cup, Shield, Plate and custom competitions per group. Auto-seeding from league table. Finals unlock automatically when both semis are complete.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="8" r="3" stroke="#60a5fa" stroke-width="1.4"/><circle cx="14" cy="6" r="2" stroke="#60a5fa" stroke-width="1.4"/><path d="M2 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/><path d="M14 10c1.7 0 3 1.3 3 3" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="feature-title">Member management</h3>
+        <p class="feature-desc">Invite players by email. Manage active, inactive and test players. Role-based access — admins see everything, players see only their own data.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M3 10l4 4 10-8" stroke="#60a5fa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="feature-title">Results & scoring</h3>
+        <p class="feature-desc">Enter scores from any device. Scheduled matches auto-notify players with calendar invites. League tables recalculate instantly. Full results history preserved.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="6" height="6" rx="1" stroke="#60a5fa" stroke-width="1.4"/><rect x="11" y="3" width="6" height="6" rx="1" stroke="#60a5fa" stroke-width="1.4"/><rect x="3" y="11" width="6" height="6" rx="1" stroke="#60a5fa" stroke-width="1.4"/><rect x="11" y="11" width="6" height="6" rx="1" stroke="#60a5fa" stroke-width="1.4"/></svg>
+        </div>
+        <h3 class="feature-title">Personal dashboard</h3>
+        <p class="feature-desc">Every player logs in to see their next match, league position and recent results — personalised to them, not the whole club. Mobile-first, works on any device.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how-bg">
+  <div class="section-inner">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Up and running<br>in minutes</h2>
+    <p class="section-sub">No training needed. No manuals. If you can send a WhatsApp, you can run your club on MyClubHub.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Set up your club</h3>
+        <p class="step-desc">Register your club, add your courts or alleys, and invite your members by email. Takes about 10 minutes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Create your leagues</h3>
+        <p class="step-desc">Create divisions, add players to groups, and generate a full round-robin fixture list automatically. The system handles the schedule.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Schedule & notify</h3>
+        <p class="step-desc">Drag fixtures onto the booking calendar. Players are automatically notified by email and SMS with a calendar invite attached.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3 class="step-title">Track & champion</h3>
+        <p class="step-desc">Enter results on your phone from the court. Standings update live. Run knockouts at the end of the season — Cup, Shield, whatever you need.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPORTS -->
+<section id="sports">
+  <div class="section-inner">
+    <p class="section-label">Supported sports</p>
+    <h2 class="section-title">Built for racket<br>and court sports</h2>
+    <p class="section-sub">The platform adapts to your sport's terminology and format — alleys for handball, courts for tennis, and so on.</p>
+    <div class="sports-grid">
+      <div class="sport-card">
+        <div class="sport-emoji">🤾</div>
+        <p class="sport-name">Handball</p>
+        <p class="sport-tag">Alleys · singles</p>
+      </div>
+      <div class="sport-card">
+        <div class="sport-emoji">🎾</div>
+        <p class="sport-name">Tennis</p>
+        <p class="sport-tag">Courts · singles/doubles</p>
+      </div>
+      <div class="sport-card">
+        <div class="sport-emoji">🏓</div>
+        <p class="sport-name">Padel</p>
+        <p class="sport-tag">Courts · pairs</p>
+      </div>
+      <div class="sport-card">
+        <div class="sport-emoji">🟡</div>
+        <p class="sport-name">Squash</p>
+        <p class="sport-tag">Courts · singles</p>
+      </div>
+      <div class="sport-card">
+        <div class="sport-emoji">🏸</div>
+        <p class="sport-name">Badminton</p>
+        <p class="sport-tag">Courts · singles/doubles</p>
+      </div>
+      <div class="sport-card" style="border-style:dashed;opacity:.5">
+        <div class="sport-emoji">＋</div>
+        <p class="sport-name">Your sport</p>
+        <p class="sport-tag">Request it</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <p class="section-label">Simple pricing</p>
+    <h2 class="section-title">Pay for what<br>you actually use</h2>
+    <p class="section-sub">€5 per active player per year. Small clubs pay less. Growing clubs scale up naturally. No hidden fees.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <p class="pricing-tier">Starter</p>
+        <p class="pricing-price"><sup>€</sup>0</p>
+        <p class="pricing-period">Free for 30 days · no card needed</p>
+        <ul class="pricing-features">
+          <li>Up to 20 players</li>
+          <li>1 league & competition</li>
+          <li>Court booking calendar</li>
+          <li>Email notifications</li>
+          <li>Mobile-friendly dashboard</li>
+        </ul>
+        <button class="pricing-cta">Start free trial</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most popular</div>
+        <p class="pricing-tier">Club</p>
+        <p class="pricing-price"><sup>€</sup>5</p>
+        <p class="pricing-period">per active player · per year</p>
+        <ul class="pricing-features">
+          <li>Unlimited players</li>
+          <li>Unlimited leagues & groups</li>
+          <li>Cup, Shield &amp; custom knockouts</li>
+          <li>SMS + email + calendar invites</li>
+          <li>Multi-court booking management</li>
+          <li>Full results history &amp; stats</li>
+        </ul>
+        <button class="pricing-cta">Get started</button>
+      </div>
+      <div class="pricing-card">
+        <p class="pricing-tier">Network</p>
+        <p class="pricing-price" style="font-size:32px;padding-top:7px">Talk<br>to us</p>
+        <p class="pricing-period">For governing bodies &amp; multi-club networks</p>
+        <ul class="pricing-features">
+          <li>Multiple clubs on one platform</li>
+          <li>Cross-club league management</li>
+          <li>National rankings &amp; reports</li>
+          <li>Dedicated support</li>
+          <li>Custom sport configuration</li>
+        </ul>
+        <button class="pricing-cta">Contact us</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <h2>Ready to run your club<br>like a professional?</h2>
+  <p>Join the clubs already using MyClubHub across Ireland.<br>First 30 days free — no credit card required.</p>
+  <div style="display:flex;gap:14px;justify-content:center">
+    <button class="cta-primary">Start free trial</button>
+    <button class="cta-secondary">Book a demo</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="logo">
+    <svg class="logo-mark" viewBox="0 0 38 38" fill="none">
+      <path d="M19 3L4 9.5V20C4 28.2 10.8 35.4 19 37C27.2 35.4 34 28.2 34 20V9.5L19 3Z" fill="#1a3a6e" stroke="#2b7fff" stroke-width="1.2"/>
+      <path d="M13 19.5l4 4 8-8" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="logo-text" style="font-size:15px">My<span>Club</span>Hub</span>
+  </a>
+  <ul class="footer-links">
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Sports</a></li>
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+  </ul>
+  <p class="footer-copy">&copy; 2026 MyClubHub. Built in Ireland.</p>
+</footer>
+
+<script>
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+});
+</script>
+</body>
+</html>
