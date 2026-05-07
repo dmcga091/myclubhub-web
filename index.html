@@ -376,7 +376,39 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
 // ── Supabase auth ────────────────────────────────────────────────────
 const SUPA_URL  = 'https://nubegyztocggertxtazr.supabase.co'
 const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YmVneXp0b2NnZ2VydHh0YXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MzY0NjYsImV4cCI6MjA5MDExMjQ2Nn0.fjmGIqf3aQjRtPkBBOfxjuPNkBT8W16pNrYHLAYH3fI'
-const APP_URL   = 'https://app.myclubhub.ie/dashboard'
+const APP_URL   = 'https://app.myclubhub.ie/auth'
+const LSKEY     = 'sb-nubegyztocggertxtazr-auth-token'
+
+// If already logged in, redirect straight to app
+;(function checkExisting(){
+  try{
+    const stored = localStorage.getItem(LSKEY)
+    if(stored){
+      const s = JSON.parse(stored)
+      if(s?.access_token && s?.expires_at && (s.expires_at * 1000) > Date.now()){
+        window.location.href = 'https://app.myclubhub.ie/auth'
+      }
+    }
+  } catch(e){}
+})()
+
+function setCrossDomainSession(data){
+  // Store in localStorage (works for same-origin app calls)
+  const session = {
+    access_token:  data.access_token,
+    refresh_token: data.refresh_token,
+    expires_at:    data.expires_at || Math.floor(Date.now()/1000) + 3600,
+    token_type:    'bearer',
+    user:          data.user,
+  }
+  localStorage.setItem(LSKEY, JSON.stringify(session))
+
+  // Also set a cookie readable by app.myclubhub.ie
+  const expires = new Date((session.expires_at * 1000) + 86400000).toUTCString()
+  document.cookie = `mch_access=${data.access_token};domain=.myclubhub.ie;path=/;expires=${expires};SameSite=Lax;Secure`
+  document.cookie = `mch_refresh=${data.refresh_token};domain=.myclubhub.ie;path=/;expires=${expires};SameSite=Lax;Secure`
+  document.cookie = `mch_expires=${session.expires_at};domain=.myclubhub.ie;path=/;expires=${expires};SameSite=Lax;Secure`
+}
 
 async function goLogin(emailId, passId, btnId, errId){
   const email = document.getElementById(emailId).value.trim()
@@ -405,12 +437,9 @@ async function goLogin(emailId, passId, btnId, errId){
       return
     }
 
-    // Store session tokens so the app picks them up
-    const session = { access_token: data.access_token, refresh_token: data.refresh_token, expires_at: data.expires_at }
-    const key = `sb-nubegyztocggertxtazr-auth-token`
-    localStorage.setItem(key, JSON.stringify(session))
+    setCrossDomainSession(data)
+    window.location.href = 'https://app.myclubhub.ie/auth'
 
-    window.location.href = APP_URL
   } catch(e){
     showErr(err, 'Connection error. Please try again.')
     btn.textContent = 'Login to Corduff →'
@@ -418,14 +447,8 @@ async function goLogin(emailId, passId, btnId, errId){
   }
 }
 
-async function goLoginModal(){
-  await goLogin('m-email','m-pass','m-btn','m-err')
-}
-
-async function goLoginHero(){
-  await goLogin('h-email','h-pass','h-btn','h-err')
-}
-
+async function goLoginModal(){ await goLogin('m-email','m-pass','m-btn','m-err') }
+async function goLoginHero(){  await goLogin('h-email','h-pass','h-btn','h-err') }
 function showErr(el, msg){ el.textContent = msg; el.style.display = 'block' }
 
 function openModal(type){
@@ -437,13 +460,13 @@ function openModal(type){
   document.getElementById('overlay').classList.add('open')
   setTimeout(()=>document.getElementById('m-email').focus(),120)
 }
-function closeModal(){document.getElementById('overlay').classList.remove('open')}
+function closeModal(){ document.getElementById('overlay').classList.remove('open') }
 function filterClubs(v){
   document.querySelectorAll('.club-row').forEach(r=>{
     r.style.display=r.querySelector('.cr-name').textContent.toLowerCase().includes(v.toLowerCase())?'':'none'
   })
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()})
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal() })
 </script>
 </body>
 </html>
