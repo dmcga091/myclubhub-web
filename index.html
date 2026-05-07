@@ -133,7 +133,7 @@ h1 em{font-style:normal;color:var(--blue2)}
 .p-period{font-size:12px;color:var(--slate2);margin-bottom:22px}
 .p-feats{list-style:none;margin-bottom:24px;display:flex;flex-direction:column;gap:9px}
 .p-feats li{font-size:13px;color:var(--slate);display:flex;align-items:flex-start;gap:7px}
-.p-feats li::before{content:'✓';color:var(--green);font-weight:700;font-size:12px;margin-top:1px;flex-shrink:0}
+.p-feats li::before{content:'✔';color:var(--green);font-weight:700;font-size:12px;margin-top:1px;flex-shrink:0}
 .p-cta{width:100%;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;padding:11px;border-radius:7px;cursor:pointer;transition:all .2s;background:none;color:var(--slate);border:1px solid var(--border)}
 .p-cta:hover{color:var(--white);border-color:rgba(255,255,255,.2)}
 .p-card.featured .p-cta{background:var(--blue);color:#fff;border-color:var(--blue)}
@@ -191,9 +191,9 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
 <!-- HERO -->
 <div class="hero">
   <div class="hero-left">
-    <div class="eyebrow"><span class="pulse-dot"></span>Sports Club Platform — Ireland</div>
+    <div class="eyebrow"><span class="pulse-dot"></span>Sports Club Platform &mdash; Ireland</div>
     <h1>The platform<br>that runs<br>your <em>club.</em></h1>
-    <p class="hero-sub">Leagues, fixtures, bookings and competitions — all connected. Built for Irish sports clubs.</p>
+    <p class="hero-sub">Leagues, fixtures, bookings and competitions &mdash; all connected. Built for Irish sports clubs.</p>
     <div class="hero-btns">
       <button class="btn-primary" onclick="openModal('corduff')">Login to Your Club</button>
       <button class="btn-outline" onclick="openModal('create')">Create a Club</button>
@@ -226,7 +226,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
           <input class="f-input" type="password" placeholder="••••••••" id="h-pass" onkeydown="if(event.key==='Enter')goLoginHero()"/>
         </div>
         <div class="f-forgot">Forgot password?</div>
-        <button class="btn-login" id="h-btn" onclick="goLoginHero()">Login to Corduff →</button>
+        <button class="btn-login" id="h-btn" onclick="goLoginHero()">Login to Corduff &rarr;</button>
       </div>
       <div class="lc-foot">Not a member? <a href="#">Contact your club admin</a></div>
     </div>
@@ -238,7 +238,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
   <p class="section-label">Club access</p>
   <h2 class="section-title">Find Your Club</h2>
   <div class="search-row">
-    <input class="search-input" type="text" placeholder="Search club name…" oninput="filterClubs(this.value)"/>
+    <input class="search-input" type="text" placeholder="Search club name&hellip;" oninput="filterClubs(this.value)"/>
     <button class="search-btn">Search</button>
   </div>
   <div class="clubs-list" id="clubs-list">
@@ -250,10 +250,10 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
         </svg>
       </div>
       <div><div class="cr-name">Corduff Handball Club</div><div class="cr-sport">Monaghan</div></div>
-      <div class="cr-action">Login →</div>
+      <div class="cr-action">Login &rarr;</div>
     </a>
   </div>
-  <div class="coming-soon">More clubs coming soon — <a href="#" style="color:var(--blue2);text-decoration:none">register your club</a></div>
+  <div class="coming-soon">More clubs coming soon &mdash; <a href="#" style="color:var(--blue2);text-decoration:none">register your club</a></div>
 </div>
 
 <!-- CURRENTLY LIVE -->
@@ -283,11 +283,11 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
   <p class="section-label">Platform features</p>
   <h2 class="section-title">Everything your club needs</h2>
   <div class="feat-grid">
-    <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2" stroke="#60a5fa" stroke-width="1.4"/><path d="M2 7h16M6 2v2M14 2v2" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/></svg></div><h3 class="feat-title">Court & Alley Bookings</h3><p class="feat-desc">Drag-and-drop calendar with real-time availability. Recurring sessions and automatic notifications.</p></div>
+    <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="16" height="14" rx="2" stroke="#60a5fa" stroke-width="1.4"/><path d="M2 7h16M6 2v2M14 2v2" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/></svg></div><h3 class="feat-title">Court &amp; Alley Bookings</h3><p class="feat-desc">Drag-and-drop calendar with real-time availability. Recurring sessions and automatic notifications.</p></div>
     <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#60a5fa" stroke-width="1.4"/><path d="M10 6v4.5l3 2" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/></svg></div><h3 class="feat-title">League Management</h3><p class="feat-desc">Create divisions and groups. Auto-generate round-robin fixtures. Live standings as results come in.</p></div>
     <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 3L4 6v5c0 3.8 2.8 7.3 6 8 3.2-.7 6-4.2 6-8V6l-6-3Z" stroke="#60a5fa" stroke-width="1.4"/></svg></div><h3 class="feat-title">Knockout Competitions</h3><p class="feat-desc">Cup, Shield and Plate competitions. Auto-seeded brackets. Finals unlock automatically.</p></div>
-    <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M3 10l4 4 10-8" stroke="#60a5fa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3 class="feat-title">Results & Scoring</h3><p class="feat-desc">Enter scores from your phone. Tables recalculate instantly. Full results history preserved.</p></div>
-    <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="7" cy="8" r="3" stroke="#60a5fa" stroke-width="1.4"/><path d="M2 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/><circle cx="14" cy="6" r="2" stroke="#60a5fa" stroke-width="1.4"/><path d="M14 10c1.7 0 3 1.3 3 3" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/></svg></div><h3 class="feat-title">Member Management</h3><p class="feat-desc">Invite players by email. Role-based access — admins see everything, players see their own data.</p></div>
+    <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M3 10l4 4 10-8" stroke="#60a5fa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3 class="feat-title">Results &amp; Scoring</h3><p class="feat-desc">Enter scores from your phone. Tables recalculate instantly. Full results history preserved.</p></div>
+    <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="7" cy="8" r="3" stroke="#60a5fa" stroke-width="1.4"/><path d="M2 17c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/><circle cx="14" cy="6" r="2" stroke="#60a5fa" stroke-width="1.4"/><path d="M14 10c1.7 0 3 1.3 3 3" stroke="#60a5fa" stroke-width="1.4" stroke-linecap="round"/></svg></div><h3 class="feat-title">Member Management</h3><p class="feat-desc">Invite players by email. Role-based access &mdash; admins see everything, players see their own data.</p></div>
     <div class="feat"><div class="feat-icon"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="6" height="6" rx="1" stroke="#60a5fa" stroke-width="1.4"/><rect x="11" y="3" width="6" height="6" rx="1" stroke="#60a5fa" stroke-width="1.4"/><rect x="3" y="11" width="6" height="6" rx="1" stroke="#60a5fa" stroke-width="1.4"/><rect x="11" y="11" width="6" height="6" rx="1" stroke="#60a5fa" stroke-width="1.4"/></svg></div><h3 class="feat-title">Personal Dashboard</h3><p class="feat-desc">Every player sees their next match, league position and recent results. Mobile-first.</p></div>
   </div>
 </div>
@@ -300,9 +300,9 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
     <div class="sport-pill"><span class="sp-emoji">🤾</span><div><div class="sp-name">Handball</div><div class="sp-tag">Alleys</div></div></div>
     <div class="sport-pill"><span class="sp-emoji">🎾</span><div><div class="sp-name">Tennis</div><div class="sp-tag">Courts</div></div></div>
     <div class="sport-pill"><span class="sp-emoji">🏓</span><div><div class="sp-name">Padel</div><div class="sp-tag">Courts</div></div></div>
-    <div class="sport-pill"><span class="sp-emoji">🟡</span><div><div class="sp-name">Squash</div><div class="sp-tag">Courts</div></div></div>
+    <div class="sport-pill"><span class="sp-emoji">🎱</span><div><div class="sp-name">Squash</div><div class="sp-tag">Courts</div></div></div>
     <div class="sport-pill"><span class="sp-emoji">🏸</span><div><div class="sp-name">Badminton</div><div class="sp-tag">Courts</div></div></div>
-    <div class="sport-pill" style="opacity:.45"><span class="sp-emoji">＋</span><div><div class="sp-name">Request</div><div class="sp-tag">your sport</div></div></div>
+    <div class="sport-pill" style="opacity:.45"><span class="sp-emoji">&#xFF0B;</span><div><div class="sp-name">Request</div><div class="sp-tag">your sport</div></div></div>
   </div>
 </div>
 
@@ -314,23 +314,23 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
     <div class="pricing-grid">
       <div class="p-card">
         <p class="p-tier">Trial</p>
-        <p class="p-price"><sup>€</sup>0</p>
-        <p class="p-period">Free for 30 days · no card needed</p>
-        <ul class="p-feats"><li>Up to 20 players</li><li>1 league & competition</li><li>Court booking calendar</li><li>Email notifications</li></ul>
+        <p class="p-price"><sup>&euro;</sup>0</p>
+        <p class="p-period">Free for 30 days &middot; no card needed</p>
+        <ul class="p-feats"><li>Up to 20 players</li><li>1 league &amp; competition</li><li>Court booking calendar</li><li>Email notifications</li></ul>
         <button class="p-cta" onclick="openModal('create')">Start free trial</button>
       </div>
       <div class="p-card featured">
         <div class="p-badge">Most popular</div>
         <p class="p-tier">Club</p>
-        <p class="p-price"><sup>€</sup>5</p>
-        <p class="p-period">per active player · per year</p>
-        <ul class="p-feats"><li>Unlimited players</li><li>Unlimited leagues & groups</li><li>Cup, Shield & custom knockouts</li><li>SMS + email + calendar invites</li><li>Multi-court management</li><li>Full results history</li></ul>
+        <p class="p-price"><sup>&euro;</sup>5</p>
+        <p class="p-period">per active player &middot; per year</p>
+        <ul class="p-feats"><li>Unlimited players</li><li>Unlimited leagues &amp; groups</li><li>Cup, Shield &amp; custom knockouts</li><li>SMS + email + calendar invites</li><li>Multi-court management</li><li>Full results history</li></ul>
         <button class="p-cta" onclick="openModal('create')">Get started</button>
       </div>
       <div class="p-card">
         <p class="p-tier">Network</p>
         <p class="p-price" style="font-size:26px;padding-top:12px">Contact<br>us</p>
-        <p class="p-period">Governing bodies & multi-club networks</p>
+        <p class="p-period">Governing bodies &amp; multi-club networks</p>
         <ul class="p-feats"><li>Multiple clubs</li><li>Cross-club leagues</li><li>National rankings</li><li>Dedicated support</li></ul>
         <button class="p-cta">Contact us</button>
       </div>
@@ -347,7 +347,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
     </svg>
     <span class="logo-text" style="font-size:17px">My<em>Club</em>Hub</span>
   </a>
-  <p class="f-copy">© 2026 MyClubHub. Built in Ireland.</p>
+  <p class="f-copy">&copy; 2026 MyClubHub. Built in Ireland.</p>
 </footer>
 
 <!-- MODAL -->
@@ -358,7 +358,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
         <div class="m-title" id="m-title">Login</div>
         <div class="m-club" id="m-club">Corduff Handball Club</div>
       </div>
-      <button class="m-close" onclick="closeModal()">✕</button>
+      <button class="m-close" onclick="closeModal()">&times;</button>
     </div>
     <div class="m-body">
       <hr class="m-divider">
@@ -366,34 +366,51 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
       <div class="f-group"><label class="f-label">Email address</label><input class="f-input" type="email" placeholder="your@email.com" id="m-email" onkeydown="if(event.key==='Enter')goLoginModal()"/></div>
       <div class="f-group"><label class="f-label">Password</label><input class="f-input" type="password" placeholder="••••••••" id="m-pass" onkeydown="if(event.key==='Enter')goLoginModal()"/></div>
       <div class="f-forgot" style="margin-bottom:18px">Forgot password?</div>
-      <button class="btn-login" id="m-btn" onclick="goLoginModal()">Login to Corduff →</button>
+      <button class="btn-login" id="m-btn" onclick="goLoginModal()">Login to Corduff &rarr;</button>
       <div class="m-footer-note">Need access? <a href="#">Contact your club admin</a></div>
     </div>
   </div>
 </div>
 
 <script>
-// ── Supabase auth ────────────────────────────────────────────────────
-const SUPA_URL  = 'https://nubegyztocggertxtazr.supabase.co'
-const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YmVneXp0b2NnZ2VydHh0YXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MzY0NjYsImV4cCI6MjA5MDExMjQ2Nn0.fjmGIqf3aQjRtPkBBOfxjuPNkBT8W16pNrYHLAYH3fI'
-const APP_URL   = 'https://app.myclubhub.ie/auth'
-const LSKEY     = 'sb-nubegyztocggertxtazr-auth-token'
+const SUPA_URL = 'https://nubegyztocggertxtazr.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YmVneXp0b2NnZ2VydHh0YXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MzY0NjYsImV4cCI6MjA5MDExMjQ2Nn0.fjmGIqf3aQjRtPkBBOfxjuPNkBT8W16pNrYHLAYH3fI'
+const LSKEY    = 'sb-nubegyztocggertxtazr-auth-token'
 
-// If already logged in, redirect straight to app
+// Only redirect to app if BOTH localStorage token AND cookie are valid
+// This prevents redirect loops after logout (logout clears cookies)
 ;(function checkExisting(){
-  try{
-    const stored = localStorage.getItem(LSKEY)
-    if(stored){
-      const s = JSON.parse(stored)
-      if(s?.access_token && s?.expires_at && (s.expires_at * 1000) > Date.now()){
-        window.location.href = 'https://app.myclubhub.ie/auth'
-      }
+  try {
+    // If no cookie, logout happened — clean up localStorage and stay here
+    const hasCookie = document.cookie.split(';').some(c => c.trim().startsWith('mch_access=') && c.trim().length > 'mch_access='.length)
+    if (!hasCookie) {
+      localStorage.removeItem(LSKEY)
+      return
     }
-  } catch(e){}
+    const stored = localStorage.getItem(LSKEY)
+    if (!stored) return
+    const s = JSON.parse(stored)
+    // Only redirect if token exists and has more than 60s left
+    if (s && s.access_token && s.expires_at && (s.expires_at * 1000) > Date.now() + 60000) {
+      window.location.replace('https://app.myclubhub.ie/auth')
+    } else {
+      // Expired — clean everything up
+      localStorage.removeItem(LSKEY)
+      clearCookies()
+    }
+  } catch(e) {
+    localStorage.removeItem(LSKEY)
+  }
 })()
 
-function setCrossDomainSession(data){
-  // Store in localStorage (works for same-origin app calls)
+function clearCookies() {
+  const exp = 'expires=Thu, 01 Jan 1970 00:00:00 GMT;domain=.myclubhub.ie;path=/;SameSite=Lax;Secure'
+  document.cookie = 'mch_access=;' + exp
+  document.cookie = 'mch_refresh=;' + exp
+  document.cookie = 'mch_expires=;' + exp
+}
+
+function setCrossDomainSession(data) {
   const session = {
     access_token:  data.access_token,
     refresh_token: data.refresh_token,
@@ -402,71 +419,63 @@ function setCrossDomainSession(data){
     user:          data.user,
   }
   localStorage.setItem(LSKEY, JSON.stringify(session))
-
-  // Also set a cookie readable by app.myclubhub.ie
   const expires = new Date((session.expires_at * 1000) + 86400000).toUTCString()
   document.cookie = `mch_access=${data.access_token};domain=.myclubhub.ie;path=/;expires=${expires};SameSite=Lax;Secure`
   document.cookie = `mch_refresh=${data.refresh_token};domain=.myclubhub.ie;path=/;expires=${expires};SameSite=Lax;Secure`
   document.cookie = `mch_expires=${session.expires_at};domain=.myclubhub.ie;path=/;expires=${expires};SameSite=Lax;Secure`
 }
 
-async function goLogin(emailId, passId, btnId, errId){
+async function goLogin(emailId, passId, btnId, errId) {
   const email = document.getElementById(emailId).value.trim()
   const pass  = document.getElementById(passId).value
   const btn   = document.getElementById(btnId)
   const err   = document.getElementById(errId)
-
-  if(!email || !pass){ showErr(err,'Please enter your email and password.'); return }
-
-  btn.textContent = 'Logging in…'
-  btn.disabled    = true
+  if (!email || !pass) { showErr(err, 'Please enter your email and password.'); return }
+  btn.textContent = 'Logging in\u2026'
+  btn.disabled = true
   err.style.display = 'none'
-
-  try{
-    const res = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`},
-      body: JSON.stringify({email, password:pass})
+  try {
+    const res = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`},
+      body: JSON.stringify({email, password: pass})
     })
     const data = await res.json()
-
-    if(!res.ok || data.error){
+    if (!res.ok || data.error) {
       showErr(err, data.error_description || data.msg || 'Invalid email or password.')
-      btn.textContent = 'Login to Corduff →'
+      btn.textContent = 'Login to Corduff \u2192'
       btn.disabled = false
       return
     }
-
     setCrossDomainSession(data)
-    window.location.href = 'https://app.myclubhub.ie/auth'
-
-  } catch(e){
+    window.location.replace('https://app.myclubhub.ie/auth')
+  } catch(e) {
     showErr(err, 'Connection error. Please try again.')
-    btn.textContent = 'Login to Corduff →'
+    btn.textContent = 'Login to Corduff \u2192'
     btn.disabled = false
   }
 }
 
-async function goLoginModal(){ await goLogin('m-email','m-pass','m-btn','m-err') }
-async function goLoginHero(){  await goLogin('h-email','h-pass','h-btn','h-err') }
-function showErr(el, msg){ el.textContent = msg; el.style.display = 'block' }
+async function goLoginModal() { await goLogin('m-email','m-pass','m-btn','m-err') }
+async function goLoginHero()  { await goLogin('h-email','h-pass','h-btn','h-err') }
+function showErr(el, msg) { el.textContent = msg; el.style.display = 'block' }
 
-function openModal(type){
-  const t=document.getElementById('m-title')
-  const c=document.getElementById('m-club')
-  const b=document.getElementById('m-btn')
-  if(type==='create'){t.textContent='Register Your Club';c.textContent='Join MyClubHub';b.textContent='Request Access →'}
-  else{t.textContent='Login';c.textContent='Corduff Handball Club';b.textContent='Login to Corduff →'}
+function openModal(type) {
+  const t = document.getElementById('m-title')
+  const c = document.getElementById('m-club')
+  const b = document.getElementById('m-btn')
+  if (type === 'create') { t.textContent='Register Your Club'; c.textContent='Join MyClubHub'; b.textContent='Request Access \u2192' }
+  else { t.textContent='Login'; c.textContent='Corduff Handball Club'; b.textContent='Login to Corduff \u2192' }
   document.getElementById('overlay').classList.add('open')
-  setTimeout(()=>document.getElementById('m-email').focus(),120)
+  setTimeout(() => document.getElementById('m-email').focus(), 120)
 }
-function closeModal(){ document.getElementById('overlay').classList.remove('open') }
-function filterClubs(v){
-  document.querySelectorAll('.club-row').forEach(r=>{
-    r.style.display=r.querySelector('.cr-name').textContent.toLowerCase().includes(v.toLowerCase())?'':'none'
+function closeModal() { document.getElementById('overlay').classList.remove('open') }
+function filterClubs(v) {
+  document.querySelectorAll('.club-row').forEach(r => {
+    r.style.display = r.querySelector('.cr-name').textContent.toLowerCase().includes(v.toLowerCase()) ? '' : 'none'
   })
 }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal() })
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() })
 </script>
 </body>
 </html>
