@@ -216,16 +216,17 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
         <div class="live-badge"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>LIVE</div>
       </div>
       <div class="lc-body">
+        <div id="h-err" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:7px;padding:9px 13px;font-size:13px;margin-bottom:12px"></div>
         <div class="f-group">
           <label class="f-label">Email address</label>
-          <input class="f-input" type="email" placeholder="your@email.com" id="h-email"/>
+          <input class="f-input" type="email" placeholder="your@email.com" id="h-email" onkeydown="if(event.key==='Enter')goLoginHero()"/>
         </div>
         <div class="f-group">
           <label class="f-label">Password</label>
-          <input class="f-input" type="password" placeholder="••••••••" id="h-pass"/>
+          <input class="f-input" type="password" placeholder="••••••••" id="h-pass" onkeydown="if(event.key==='Enter')goLoginHero()"/>
         </div>
         <div class="f-forgot">Forgot password?</div>
-        <button class="btn-login" onclick="goLogin()">Login to Corduff →</button>
+        <button class="btn-login" id="h-btn" onclick="goLoginHero()">Login to Corduff →</button>
       </div>
       <div class="lc-foot">Not a member? <a href="#">Contact your club admin</a></div>
     </div>
@@ -361,16 +362,72 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
     </div>
     <div class="m-body">
       <hr class="m-divider">
-      <div class="f-group"><label class="f-label">Email address</label><input class="f-input" type="email" placeholder="your@email.com" id="m-email"/></div>
-      <div class="f-group"><label class="f-label">Password</label><input class="f-input" type="password" placeholder="••••••••" id="m-pass"/></div>
+      <div id="m-err" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:7px;padding:9px 13px;font-size:13px;margin-bottom:12px"></div>
+      <div class="f-group"><label class="f-label">Email address</label><input class="f-input" type="email" placeholder="your@email.com" id="m-email" onkeydown="if(event.key==='Enter')goLoginModal()"/></div>
+      <div class="f-group"><label class="f-label">Password</label><input class="f-input" type="password" placeholder="••••••••" id="m-pass" onkeydown="if(event.key==='Enter')goLoginModal()"/></div>
       <div class="f-forgot" style="margin-bottom:18px">Forgot password?</div>
-      <button class="btn-login" id="m-btn" onclick="goLogin()">Login →</button>
+      <button class="btn-login" id="m-btn" onclick="goLoginModal()">Login to Corduff →</button>
       <div class="m-footer-note">Need access? <a href="#">Contact your club admin</a></div>
     </div>
   </div>
 </div>
 
 <script>
+// ── Supabase auth ────────────────────────────────────────────────────
+const SUPA_URL  = 'https://nubegyztocggertxtazr.supabase.co'
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YmVneXp0b2NnZ2VydHh0YXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MzY0NjYsImV4cCI6MjA5MDExMjQ2Nn0.fjmGIqf3aQjRtPkBBOfxjuPNkBT8W16pNrYHLAYH3fI'
+const APP_URL   = 'https://app.myclubhub.ie/dashboard'
+
+async function goLogin(emailId, passId, btnId, errId){
+  const email = document.getElementById(emailId).value.trim()
+  const pass  = document.getElementById(passId).value
+  const btn   = document.getElementById(btnId)
+  const err   = document.getElementById(errId)
+
+  if(!email || !pass){ showErr(err,'Please enter your email and password.'); return }
+
+  btn.textContent = 'Logging in…'
+  btn.disabled    = true
+  err.style.display = 'none'
+
+  try{
+    const res = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`},
+      body: JSON.stringify({email, password:pass})
+    })
+    const data = await res.json()
+
+    if(!res.ok || data.error){
+      showErr(err, data.error_description || data.msg || 'Invalid email or password.')
+      btn.textContent = 'Login to Corduff →'
+      btn.disabled = false
+      return
+    }
+
+    // Store session tokens so the app picks them up
+    const session = { access_token: data.access_token, refresh_token: data.refresh_token, expires_at: data.expires_at }
+    const key = `sb-nubegyztocggertxtazr-auth-token`
+    localStorage.setItem(key, JSON.stringify(session))
+
+    window.location.href = APP_URL
+  } catch(e){
+    showErr(err, 'Connection error. Please try again.')
+    btn.textContent = 'Login to Corduff →'
+    btn.disabled = false
+  }
+}
+
+async function goLoginModal(){
+  await goLogin('m-email','m-pass','m-btn','m-err')
+}
+
+async function goLoginHero(){
+  await goLogin('h-email','h-pass','h-btn','h-err')
+}
+
+function showErr(el, msg){ el.textContent = msg; el.style.display = 'block' }
+
 function openModal(type){
   const t=document.getElementById('m-title')
   const c=document.getElementById('m-club')
@@ -381,7 +438,6 @@ function openModal(type){
   setTimeout(()=>document.getElementById('m-email').focus(),120)
 }
 function closeModal(){document.getElementById('overlay').classList.remove('open')}
-function goLogin(){window.location.href='https://handball-hub-2.vercel.app/login'}
 function filterClubs(v){
   document.querySelectorAll('.club-row').forEach(r=>{
     r.style.display=r.querySelector('.cr-name').textContent.toLowerCase().includes(v.toLowerCase())?'':'none'
