@@ -448,7 +448,9 @@ async function goLogin(emailId, passId, btnId, errId) {
       return
     }
     setCrossDomainSession(data)
-    window.location.replace('https://app.myclubhub.ie/auth')
+    // Pass tokens in URL hash so AuthCallback can restore the session directly
+    const hash = `access_token=${encodeURIComponent(data.access_token)}&refresh_token=${encodeURIComponent(data.refresh_token)}&expires_at=${data.expires_at}&token_type=bearer`
+    window.location.replace(`https://app.myclubhub.ie/auth#${hash}`)
   } catch(e) {
     showErr(err, 'Connection error. Please try again.')
     btn.textContent = 'Login to Corduff \u2192'
