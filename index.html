@@ -819,7 +819,26 @@ async function ccSubmit() {
       // Non-fatal if profile already exists (auth trigger may have created it)
     }
 
-    // 4. Create SMS settings row for the new club (non-fatal)
+    // 4. Add admin to user_clubs junction table
+    await fetch(`${SUPA_URL}/rest/v1/user_clubs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({
+        user_id:    userId,
+        club_id:    club.id,
+        role:       'admin',
+        roles:      ['admin','player'],
+        status:     'active',
+        sport_type: _ccSport,
+      })
+    }).catch(()=>{})
+
+    // 5. Create SMS settings row for the new club (non-fatal)
     await fetch(`${SUPA_URL}/rest/v1/club_sms_settings`, {
       method: 'POST',
       headers: {
