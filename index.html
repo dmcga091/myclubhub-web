@@ -721,6 +721,29 @@ function toggleCCPw(inputId, btn) {
   else                          { inp.type='password'; btn.textContent='Show' }
 }
 
+async function checkEmailExists() {
+  const email = document.getElementById('cc-admin-email').value.trim()
+  if (!email || !email.includes('@')) return
+  const res  = await fetch(
+    `${SUPA_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id,full_name`,
+    { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+  )
+  const data = await res.json()
+  const pwSection = document.getElementById('cc-pw-section')
+  const existingNote = document.getElementById('cc-existing-note')
+  const nameInput = document.getElementById('cc-admin-name')
+  if (Array.isArray(data) && data.length > 0) {
+    // Existing user — hide password fields, show note
+    if (pwSection)    pwSection.style.display = 'none'
+    if (existingNote) existingNote.style.display = ''
+    if (data[0].full_name && nameInput) nameInput.value = data[0].full_name
+  } else {
+    // New user — show password fields
+    if (pwSection)    pwSection.style.display = ''
+    if (existingNote) existingNote.style.display = 'none'
+  }
+}
+
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
 }
@@ -734,8 +757,11 @@ async function ccSubmit() {
 
   if (!adminName)         { showCCErr(err, 'Please enter your full name.'); return }
   if (!email || !email.includes('@')) { showCCErr(err, 'Please enter a valid email address.'); return }
-  if (pass.length < 8)    { showCCErr(err, 'Password must be at least 8 characters.'); return }
-  if (pass !== pass2)     { showCCErr(err, 'Passwords do not match.'); return }
+  const pwHidden = document.getElementById('cc-pw-section')?.style.display === 'none'
+  if (!pwHidden) {
+    if (pass.length < 8)  { showCCErr(err, 'Password must be at least 8 characters.'); return }
+    if (pass !== pass2)   { showCCErr(err, 'Passwords do not match.'); return }
+  }
 
   err.className = 'cc-err'
   _ccSaving = true
@@ -747,24 +773,40 @@ async function ccSubmit() {
   const county   = document.getElementById('cc-county').value
 
   try {
-    // 1. Sign up the admin user
-    const signupRes = await fetch(`${SUPA_URL}/auth/v1/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'apikey': SUPA_KEY },
-      body: JSON.stringify({ email, password: pass, data: { full_name: adminName } })
-    })
-    const signupData = await signupRes.json()
-    if (signupData.error || (!signupData.user && !signupData.id)) {
-      const msg = signupData.msg || signupData.error?.message || signupData.error || 'Sign up failed. This email may already be in use.'
-      showCCErr(err, msg)
-      nextBtn.textContent = '🚀 Create Club'
-      nextBtn.disabled    = false
-      _ccSaving = false
-      return
-    }
+    // 1. Check if this email already has an account in profiles
+    let userId, token, alreadyExists = false
 
-    const userId = signupData.user?.id || signupData.id
-    const token  = signupData.session?.access_token || signupData.access_token || SUPA_KEY
+    const existingRes = await fetch(
+      `${SUPA_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id`,
+      { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+    )
+    const existingData = await existingRes.json()
+
+    if (Array.isArray(existingData) && existingData.length > 0) {
+      // Email already has an account — just use their existing user ID
+      // No sign-in needed, we create the club and link it to them
+      alreadyExists = true
+      userId = existingData[0].id
+      token  = SUPA_KEY
+    } else {
+      // New user — create auth account
+      const signupRes = await fetch(`${SUPA_URL}/auth/v1/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPA_KEY },
+        body: JSON.stringify({ email, password: pass, data: { full_name: adminName } })
+      })
+      const signupData = await signupRes.json()
+      if (signupData.error || (!signupData.user && !signupData.id)) {
+        const msg = signupData.msg || signupData.error?.message || signupData.error || 'Sign up failed. Please try again.'
+        showCCErr(err, msg)
+        nextBtn.textContent = '🚀 Create Club'
+        nextBtn.disabled    = false
+        _ccSaving = false
+        return
+      }
+      userId = signupData.user?.id || signupData.id
+      token  = signupData.session?.access_token || signupData.access_token || SUPA_KEY
+    }
 
     // 2. Create the club record
     // Use anon key as Authorization since new user may lack RLS insert rights
@@ -857,8 +899,10 @@ async function ccSubmit() {
     document.getElementById('cc-success').style.display = ''
     document.getElementById('cc-title').textContent    = '🎉 Welcome to MyClubHub!'
     document.getElementById('cc-subtitle').textContent = clubName + ' · ' + county
-    document.getElementById('cc-success-msg').textContent =
-      `${clubName} is now live! We've sent a confirmation email to ${email}. Confirm your email then log in at app.myclubhub.ie to set up your club.`
+    const isNewUser = !alreadyExists
+    document.getElementById('cc-success-msg').textContent = isNewUser
+      ? `${clubName} is now live! We've sent a confirmation email to ${email}. Confirm your email then log in at app.myclubhub.ie to get started.`
+      : `${clubName} has been added to your account! Log in at app.myclubhub.ie — you'll see a club picker to switch between your clubs.`
 
   } catch (e) {
     showCCErr(err, e.message || 'Something went wrong. Please try again.')
@@ -963,20 +1007,26 @@ document.addEventListener('keydown', e => {
       </div>
       <div class="cc-field">
         <label class="cc-label">Email Address</label>
-        <input class="cc-input" id="cc-admin-email" type="email" placeholder="john@yourclub.ie"/>
+        <input class="cc-input" id="cc-admin-email" type="email" placeholder="john@yourclub.ie" onblur="checkEmailExists()"/>
       </div>
-      <div class="cc-field">
-        <label class="cc-label">Password</label>
-        <div class="cc-pw-wrap">
-          <input class="cc-input" id="cc-admin-pass" type="password" placeholder="Min. 8 characters" style="padding-right:60px"/>
-          <button class="cc-pw-toggle" type="button" onclick="toggleCCPw('cc-admin-pass',this)">Show</button>
+      <!-- existing user note (hidden by default) -->
+      <div id="cc-existing-note" style="display:none;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac;border-radius:9px;padding:10px 14px;font-size:12px;margin-bottom:14px">
+        ✅ Account found — the new club will be added to your existing account. No password needed.
+      </div>
+      <div id="cc-pw-section">
+        <div class="cc-field">
+          <label class="cc-label">Password</label>
+          <div class="cc-pw-wrap">
+            <input class="cc-input" id="cc-admin-pass" type="password" placeholder="Min. 8 characters" style="padding-right:60px"/>
+            <button class="cc-pw-toggle" type="button" onclick="toggleCCPw('cc-admin-pass',this)">Show</button>
+          </div>
         </div>
-      </div>
-      <div class="cc-field">
-        <label class="cc-label">Confirm Password</label>
-        <div class="cc-pw-wrap">
-          <input class="cc-input" id="cc-admin-pass2" type="password" placeholder="Repeat password" style="padding-right:60px"/>
-          <button class="cc-pw-toggle" type="button" onclick="toggleCCPw('cc-admin-pass2',this)">Show</button>
+        <div class="cc-field">
+          <label class="cc-label">Confirm Password</label>
+          <div class="cc-pw-wrap">
+            <input class="cc-input" id="cc-admin-pass2" type="password" placeholder="Repeat password" style="padding-right:60px"/>
+            <button class="cc-pw-toggle" type="button" onclick="toggleCCPw('cc-admin-pass2',this)">Show</button>
+          </div>
         </div>
       </div>
     </div>
