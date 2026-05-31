@@ -635,6 +635,229 @@ document.addEventListener('DOMContentLoaded', () => {
   updateHeroCard(selectedClub)
 })
 
+
+// ── Create a Club flow ────────────────────────────────────────────────────────
+let _ccStep     = 1
+let _ccSport    = ''
+let _ccSaving   = false
+
+function openCreateModal() {
+  _ccStep   = 1
+  _ccSport  = ''
+  _ccSaving = false
+  ;['cc-club-name','cc-admin-name','cc-admin-email','cc-admin-pass','cc-admin-pass2'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = ''
+  })
+  ;['cc-county','cc-size'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.selectedIndex = 0
+  })
+  const pwSection = document.getElementById('cc-pw-section')
+  const existNote = document.getElementById('cc-existing-note')
+  if (pwSection) pwSection.style.display = ''
+  if (existNote) existNote.style.display = 'none'
+  document.querySelectorAll('.cc-sport-btn').forEach(b => b.classList.remove('selected','selected-gaa'))
+  document.querySelectorAll('.cc-err').forEach(e => { e.className='cc-err'; e.textContent='' })
+  document.getElementById('cc-steps').style.display = ''
+  document.getElementById('cc-footer').style.display = ''
+  document.getElementById('cc-success').style.display = 'none'
+  ccShowStep(1)
+  document.getElementById('cc-overlay').classList.add('open')
+}
+
+function closeCreateModal() {
+  document.getElementById('cc-overlay').classList.remove('open')
+}
+
+function selectSport(sport) {
+  _ccSport = sport
+  document.querySelectorAll('.cc-sport-btn').forEach(b => b.classList.remove('selected','selected-gaa'))
+  const btn = document.getElementById('sport-' + sport)
+  if (btn) btn.classList.add(sport === 'gaa' ? 'selected-gaa' : 'selected')
+  document.getElementById('cc-next-btn').disabled = false
+}
+
+function ccShowStep(n) {
+  _ccStep = n
+  for (let i = 1; i <= 3; i++) {
+    const panel = document.getElementById('cc-step-' + i)
+    if (panel) panel.style.display = i === n ? '' : 'none'
+  }
+  document.getElementById('cc-success').style.display = 'none'
+  document.getElementById('cc-footer').style.display = ''
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('step-dot-' + i)
+    if (!dot) continue
+    dot.classList.remove('active','done')
+    if (i < n)  dot.classList.add('done')
+    if (i === n) dot.classList.add('active')
+  }
+  const titles    = ['','Choose Your Sport','Club Details','Admin Account']
+  const subtitles = ['','What sport does your club play?','Tell us about your club','Create the admin login']
+  document.getElementById('cc-title').textContent    = titles[n]
+  document.getElementById('cc-subtitle').textContent = subtitles[n]
+  const backBtn = document.getElementById('cc-back-btn')
+  const nextBtn = document.getElementById('cc-next-btn')
+  backBtn.style.display = n > 1 ? '' : 'none'
+  nextBtn.textContent   = n === 3 ? '🚀 Create Club' : 'Continue →'
+  nextBtn.disabled      = n === 1 ? !_ccSport : false
+  if (n === 2) setTimeout(()=>document.getElementById('cc-club-name')?.focus(), 80)
+  if (n === 3) setTimeout(()=>document.getElementById('cc-admin-name')?.focus(), 80)
+}
+
+function ccBack() { if (_ccStep > 1) ccShowStep(_ccStep - 1) }
+
+async function ccNext() {
+  if (_ccSaving) return
+  if (_ccStep === 1) {
+    if (!_ccSport) return
+    ccShowStep(2)
+  } else if (_ccStep === 2) {
+    const name   = document.getElementById('cc-club-name').value.trim()
+    const county = document.getElementById('cc-county').value.trim()
+    const err    = document.getElementById('cc-err-2')
+    if (!name)   { showCCErr(err, 'Please enter your club name.'); return }
+    if (!county) { showCCErr(err, 'Please enter your county.'); return }
+    err.className = 'cc-err'; err.textContent = ''
+    ccShowStep(3)
+  } else if (_ccStep === 3) {
+    await ccSubmit()
+  }
+}
+
+function showCCErr(el, msg) { el.textContent = msg; el.className = 'cc-err show' }
+
+function toggleCCPw(inputId, btn) {
+  const inp = document.getElementById(inputId)
+  if (inp.type === 'password') { inp.type='text';  btn.textContent='Hide' }
+  else                          { inp.type='password'; btn.textContent='Show' }
+}
+
+async function checkEmailExists() {
+  const email = document.getElementById('cc-admin-email').value.trim()
+  if (!email || !email.includes('@')) return
+  const res  = await fetch(
+    `${SUPA_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id,full_name`,
+    { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+  )
+  const data = await res.json()
+  const pwSection = document.getElementById('cc-pw-section')
+  const existNote = document.getElementById('cc-existing-note')
+  const nameInput = document.getElementById('cc-admin-name')
+  if (Array.isArray(data) && data.length > 0) {
+    if (pwSection) pwSection.style.display = 'none'
+    if (existNote) existNote.style.display = ''
+    if (data[0].full_name && nameInput) nameInput.value = data[0].full_name
+  } else {
+    if (pwSection) pwSection.style.display = ''
+    if (existNote) existNote.style.display = 'none'
+  }
+}
+
+function slugify(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
+}
+
+async function ccSubmit() {
+  const err       = document.getElementById('cc-err-3')
+  const adminName = document.getElementById('cc-admin-name').value.trim()
+  const email     = document.getElementById('cc-admin-email').value.trim()
+  const pass      = document.getElementById('cc-admin-pass').value
+  const pass2     = document.getElementById('cc-admin-pass2').value
+  const pwHidden  = document.getElementById('cc-pw-section')?.style.display === 'none'
+
+  if (!adminName)               { showCCErr(err, 'Please enter your full name.'); return }
+  if (!email || !email.includes('@')) { showCCErr(err, 'Please enter a valid email address.'); return }
+  if (!pwHidden) {
+    if (pass.length < 8)        { showCCErr(err, 'Password must be at least 8 characters.'); return }
+    if (pass !== pass2)         { showCCErr(err, 'Passwords do not match.'); return }
+  }
+
+  err.className = 'cc-err'
+  _ccSaving = true
+  const nextBtn = document.getElementById('cc-next-btn')
+  nextBtn.textContent = 'Creating…'
+  nextBtn.disabled    = true
+
+  const clubName = document.getElementById('cc-club-name').value.trim()
+  const county   = document.getElementById('cc-county').value.trim()
+
+  try {
+    let userId, alreadyExists = false
+
+    // Check if email already has an account
+    const existingRes = await fetch(
+      `${SUPA_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id`,
+      { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+    )
+    const existingData = await existingRes.json()
+
+    if (Array.isArray(existingData) && existingData.length > 0) {
+      alreadyExists = true
+      userId = existingData[0].id
+    } else {
+      const signupRes = await fetch(`${SUPA_URL}/auth/v1/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPA_KEY },
+        body: JSON.stringify({ email, password: pass, data: { full_name: adminName } })
+      })
+      const signupData = await signupRes.json()
+      if (signupData.error || (!signupData.user && !signupData.id)) {
+        showCCErr(err, signupData.msg || signupData.error?.message || signupData.error || 'Sign up failed.')
+        nextBtn.textContent = '🚀 Create Club'; nextBtn.disabled = false; _ccSaving = false; return
+      }
+      userId = signupData.user?.id || signupData.id
+    }
+
+    // Create the club
+    const clubSlug = slugify(clubName) + '-' + Math.random().toString(36).slice(2,6)
+    const clubRes  = await fetch(`${SUPA_URL}/rest/v1/clubs`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=representation' },
+      body: JSON.stringify({ name:clubName, slug:clubSlug, sport_type:_ccSport, location:county+', Ireland', status:'active' })
+    })
+    const clubData = await clubRes.json()
+    if (!clubRes.ok) throw new Error('Club creation failed: ' + (clubData?.message || clubData?.hint || JSON.stringify(clubData)))
+    const club = Array.isArray(clubData) ? clubData[0] : clubData
+    if (!club?.id) throw new Error('No club ID returned.')
+
+    // Create/update profile
+    await fetch(`${SUPA_URL}/rest/v1/profiles`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal' },
+      body: JSON.stringify({ id:userId, full_name:adminName, email, role:'admin', roles:['admin','player'], status:'active', club_id:club.id, sport_type:_ccSport })
+    }).catch(()=>{})
+
+    // Add to user_clubs
+    await fetch(`${SUPA_URL}/rest/v1/user_clubs`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal' },
+      body: JSON.stringify({ user_id:userId, club_id:club.id, role:'admin', roles:['admin','player'], status:'active', sport_type:_ccSport })
+    }).catch(()=>{})
+
+    // Create SMS settings row
+    await fetch(`${SUPA_URL}/rest/v1/club_sms_settings`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal' },
+      body: JSON.stringify({ club_id:club.id })
+    }).catch(()=>{})
+
+    // Success
+    document.getElementById('cc-steps').style.display  = 'none'
+    document.getElementById('cc-footer').style.display = 'none'
+    for (let i=1;i<=3;i++) { const p=document.getElementById('cc-step-'+i); if(p) p.style.display='none' }
+    document.getElementById('cc-success').style.display = ''
+    document.getElementById('cc-title').textContent    = '🎉 Welcome to MyClubHub!'
+    document.getElementById('cc-subtitle').textContent = clubName + ' · ' + county
+    document.getElementById('cc-success-msg').textContent = alreadyExists
+      ? `${clubName} has been added to your account! Log in at app.myclubhub.ie — your new club will appear alongside your existing ones.`
+      : `${clubName} is live! Log in at app.myclubhub.ie to get started.`
+
+  } catch(e) {
+    showCCErr(err, e.message || 'Something went wrong. Please try again.')
+    nextBtn.textContent = '🚀 Create Club'; nextBtn.disabled = false
+  }
+  _ccSaving = false
+}
 // ── ESCAPE closes create modal ────────────────────────────────────────────────
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCreateModal() })
 </script>
