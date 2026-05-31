@@ -250,7 +250,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
   </a>
   <div class="nav-right">
     <button class="nav-create" onclick="openCreateModal()">Create a Club</button>
-    <button class="nav-login" onclick="openModal('corduff')">Login</button>
+    <button class="nav-login" onclick="window.scrollTo({top:0,behavior:'smooth'})">Login</button>
   </div>
 </nav>
 
@@ -261,7 +261,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
     <h1>The platform<br>that runs<br>your <em>club.</em></h1>
     <p class="hero-sub">Leagues, fixtures, bookings and competitions &mdash; all connected. Built for Irish sports clubs.</p>
     <div class="hero-btns">
-      <button class="btn-primary" onclick="openModal('corduff')">Login to Your Club</button>
+      <button class="btn-primary" onclick="window.scrollTo({top:0,behavior:'smooth'})">Login to Your Club</button>
       <button class="btn-outline" onclick="openCreateModal()">Create a Club</button>
     </div>
   </div>
@@ -269,15 +269,16 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
   <div class="hero-right">
     <div class="login-card">
       <div class="lc-head">
-        <div class="lc-icon">
+        <div class="lc-icon" id="h-icon-wrap" style="background:#2563EB">
           <svg width="20" height="20" viewBox="0 0 38 38" fill="none">
             <path d="M19 3L4 9.5V20C4 28.2 10.8 35.4 19 37C27.2 35.4 34 28.2 34 20V9.5L19 3Z" fill="#1a3a6e" stroke="#60a5fa" stroke-width="1.4"/>
             <path d="M13 19.5l4 4 8-8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div>
-          <div class="lc-name">Corduff Handball Club</div>
-          <div class="lc-sub">Monaghan</div>
+          <div class="lc-name" id="h-club-name">Corduff Handball Club</div>
+          <div class="lc-sub" id="h-club-loc">Monaghan</div>
+          <div style="font-size:10px;color:var(--blue2);margin-top:2px" id="h-sport-tag">🤾 Handball</div>
         </div>
         <div class="live-badge"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>LIVE</div>
       </div>
@@ -310,7 +311,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
   <div class="clubs-list" id="clubs-list">
 
     <!-- Corduff Handball Club -->
-    <a class="club-row" href="#" onclick="openModal('corduff');return false">
+    <a class="club-row" href="#" data-club-key="corduff" onclick="switchToClub('corduff');return false">
       <div class="cr-icon cr-icon-handball">
         <svg width="18" height="18" viewBox="0 0 38 38" fill="none">
           <path d="M19 3L4 9.5V20C4 28.2 10.8 35.4 19 37C27.2 35.4 34 28.2 34 20V9.5L19 3Z" fill="#1a3a6e" stroke="#60a5fa" stroke-width="1.5"/>
@@ -322,11 +323,11 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
         <div class="cr-meta">Monaghan</div>
       </div>
       <span class="cr-sport-badge cr-sport-handball">Handball</span>
-      <div class="cr-action">Login &rarr;</div>
+      <div class="cr-action">Select &rarr;</div>
     </a>
 
     <!-- AFC GAA -->
-    <a class="club-row" href="#" onclick="openModal('afcgaa');return false" style="border-color:rgba(34,197,94,.15)">
+    <a class="club-row" href="#" data-club-key="afcgaa" onclick="switchToClub('afcgaa');return false" style="border-color:rgba(34,197,94,.15)">
       <div class="cr-icon cr-icon-gaa">
         <span style="font-size:18px">🏈</span>
       </div>
@@ -335,7 +336,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
         <div class="cr-meta">Monaghan, Ireland</div>
       </div>
       <span class="cr-sport-badge cr-sport-gaa">GAA Football</span>
-      <div class="cr-action cr-action-gaa">Login &rarr;</div>
+      <div class="cr-action cr-action-gaa">Select &rarr;</div>
     </a>
 
   </div>
@@ -481,6 +482,33 @@ const SUPA_URL = 'https://nubegyztocggertxtazr.supabase.co'
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51YmVneXp0b2NnZ2VydHh0YXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MzY0NjYsImV4cCI6MjA5MDExMjQ2Nn0.fjmGIqf3aQjRtPkBBOfxjuPNkBT8W16pNrYHLAYH3fI'
 const LSKEY    = 'sb-nubegyztocggertxtazr-auth-token'
 
+// ── CLUBS REGISTRY ────────────────────────────────────────────────────────────
+// Add new clubs here as they sign up
+const CLUBS = {
+  corduff: {
+    key:        'corduff',
+    name:       'Corduff Handball Club',
+    location:   'Monaghan',
+    sport:      'handball',
+    sportLabel: '🤾 Handball',
+    btnLabel:   'Login to Corduff',
+    color:      '#2563EB',
+  },
+  afcgaa: {
+    key:        'afcgaa',
+    name:       'AFC GAA',
+    location:   'Monaghan, Ireland',
+    sport:      'gaa',
+    sportLabel: '🏈 GAA Football',
+    btnLabel:   'Login to AFC GAA',
+    color:      '#16A34A',
+  },
+}
+
+// ── SELECTED CLUB (persisted in localStorage) ─────────────────────────────────
+let selectedClub = CLUBS[localStorage.getItem('selected_club')] || CLUBS.corduff
+
+// ── REDIRECT LOOP PREVENTION ──────────────────────────────────────────────────
 ;(function checkExisting(){
   try {
     const hasCookie = document.cookie.split(';').some(c => c.trim().startsWith('mch_access=') && c.trim().length > 'mch_access='.length)
@@ -499,7 +527,7 @@ const LSKEY    = 'sb-nubegyztocggertxtazr-auth-token'
 
 function clearCookies() {
   const exp = 'expires=Thu, 01 Jan 1970 00:00:00 GMT;domain=.myclubhub.ie;path=/;SameSite=Lax;Secure'
-  document.cookie = 'mch_access=;' + exp
+  document.cookie = 'mch_access=;'  + exp
   document.cookie = 'mch_refresh=;' + exp
   document.cookie = 'mch_expires=;' + exp
 }
@@ -519,13 +547,41 @@ function setCrossDomainSession(data) {
   document.cookie = `mch_expires=${session.expires_at};domain=.myclubhub.ie;path=/;expires=${expires};SameSite=Lax;Secure`
 }
 
-async function goLogin(emailId, passId, btnId, errId, btnLabel) {
+// ── UPDATE HERO LOGIN CARD ─────────────────────────────────────────────────────
+function updateHeroCard(club) {
+  selectedClub = club
+  localStorage.setItem('selected_club', club.key)
+
+  // Header
+  const nameEl   = document.getElementById('h-club-name')
+  const locEl    = document.getElementById('h-club-loc')
+  const sportEl  = document.getElementById('h-sport-tag')
+  const btnEl    = document.getElementById('h-btn')
+  const iconWrap = document.getElementById('h-icon-wrap')
+
+  if (nameEl)   nameEl.textContent   = club.name
+  if (locEl)    locEl.textContent    = club.location
+  if (sportEl)  sportEl.textContent  = club.sportLabel
+  if (btnEl) {
+    btnEl.textContent = club.btnLabel + ' →'
+    btnEl.style.background = club.color
+  }
+  if (iconWrap) iconWrap.style.background = club.color
+
+  // Highlight the active club row
+  document.querySelectorAll('.club-row').forEach(row => {
+    row.style.borderColor = row.dataset.clubKey === club.key ? club.color : ''
+  })
+}
+
+// ── LOGIN ──────────────────────────────────────────────────────────────────────
+async function goLogin(emailId, passId, btnId, errId) {
   const email = document.getElementById(emailId).value.trim()
   const pass  = document.getElementById(passId).value
   const btn   = document.getElementById(btnId)
   const err   = document.getElementById(errId)
   if (!email || !pass) { showErr(err, 'Please enter your email and password.'); return }
-  btn.textContent = 'Logging in\u2026'
+  btn.textContent = 'Logging in…'
   btn.disabled = true
   err.style.display = 'none'
   try {
@@ -537,389 +593,50 @@ async function goLogin(emailId, passId, btnId, errId, btnLabel) {
     const data = await res.json()
     if (!res.ok || data.error) {
       showErr(err, data.error_description || data.msg || 'Invalid email or password.')
-      btn.textContent = btnLabel
+      btn.textContent = selectedClub.btnLabel + ' →'
       btn.disabled = false
       return
     }
     setCrossDomainSession(data)
-    // AuthCallback will read sport_type from Supabase and route to /dashboard or /gaa automatically
+    // Store selected club sport so AuthCallback routes correctly
+    localStorage.setItem('pending_sport', selectedClub.sport)
     const hash = `access_token=${encodeURIComponent(data.access_token)}&refresh_token=${encodeURIComponent(data.refresh_token)}&expires_at=${data.expires_at}&token_type=bearer`
     window.location.replace(`https://app.myclubhub.ie/auth#${hash}`)
   } catch(e) {
     showErr(err, 'Connection error. Please try again.')
-    btn.textContent = btnLabel
+    btn.textContent = selectedClub.btnLabel + ' →'
     btn.disabled = false
   }
 }
 
-async function goLoginModal() {
-  const btn = document.getElementById('m-btn')
-  await goLogin('m-email','m-pass','m-btn','m-err', btn.dataset.label || btn.textContent)
-}
-async function goLoginHero() {
-  await goLogin('h-email','h-pass','h-btn','h-err','Login to Corduff \u2192')
-}
+async function goLoginHero() { await goLogin('h-email','h-pass','h-btn','h-err') }
+
 function showErr(el, msg) { el.textContent = msg; el.style.display = 'block' }
 
-function openModal(type) {
-  const modal   = document.getElementById('modal')
-  const title   = document.getElementById('m-title')
-  const club    = document.getElementById('m-club')
-  const sportTag= document.getElementById('m-sport-tag')
-  const btn     = document.getElementById('m-btn')
-
-  // Reset modal styles
-  modal.classList.remove('gaa-modal')
-  club.classList.remove('m-club-gaa')
-  btn.classList.remove('btn-login-gaa')
-  sportTag.className = 'm-sport-tag'
-
-  if (type === 'afcgaa') {
-    title.textContent    = 'Login'
-    club.textContent     = 'AFC GAA'
-    club.classList.add('m-club-gaa')
-    sportTag.textContent = '🏈 GAA Football'
-    sportTag.classList.add('m-sport-gaa')
-    btn.textContent      = 'Login to AFC GAA \u2192'
-    btn.dataset.label    = 'Login to AFC GAA \u2192'
-    btn.classList.add('btn-login-gaa')
-    modal.classList.add('gaa-modal')
-  } else if (type === 'create') {
-    title.textContent    = 'Register Your Club'
-    club.textContent     = 'Join MyClubHub'
-    sportTag.textContent = '🏆 Multi-Sport'
-    sportTag.classList.add('m-sport-handball')
-    btn.textContent      = 'Request Access \u2192'
-    btn.dataset.label    = 'Request Access \u2192'
-  } else {
-    // corduff (default)
-    title.textContent    = 'Login'
-    club.textContent     = 'Corduff Handball Club'
-    sportTag.textContent = '🤾 Handball'
-    sportTag.classList.add('m-sport-handball')
-    btn.textContent      = 'Login to Corduff \u2192'
-    btn.dataset.label    = 'Login to Corduff \u2192'
-  }
-
-  document.getElementById('overlay').classList.add('open')
-  setTimeout(() => document.getElementById('m-email').focus(), 120)
+// ── CLUB SWITCHER ─────────────────────────────────────────────────────────────
+// Called when user clicks a club row in "Find Your Club"
+function switchToClub(clubKey) {
+  const club = CLUBS[clubKey]
+  if (!club) return
+  updateHeroCard(club)
+  // Scroll to top so they see the updated login card
+  window.scrollTo({top: 0, behavior: 'smooth'})
 }
 
-function closeModal() {
-  document.getElementById('overlay').classList.remove('open')
-  document.getElementById('m-err').style.display = 'none'
-}
-
+// ── FILTER ────────────────────────────────────────────────────────────────────
 function filterClubs(v) {
   document.querySelectorAll('.club-row').forEach(r => {
     r.style.display = r.querySelector('.cr-name').textContent.toLowerCase().includes(v.toLowerCase()) ? '' : 'none'
   })
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() })
-
-// ── Create a Club flow ────────────────────────────────────────────────────────
-let _ccStep     = 1
-let _ccSport    = ''
-let _ccSaving   = false
-
-function openCreateModal() {
-  _ccStep   = 1
-  _ccSport  = ''
-  _ccSaving = false
-  // Reset all fields
-  ;['cc-club-name','cc-admin-name','cc-admin-email','cc-admin-pass','cc-admin-pass2'].forEach(id => {
-    const el = document.getElementById(id)
-    if (el) el.value = ''
-  })
-  ;['cc-county','cc-size'].forEach(id => {
-    const el = document.getElementById(id)
-    if (el) el.selectedIndex = 0
-  })
-  document.querySelectorAll('.cc-sport-btn').forEach(b => b.classList.remove('selected','selected-gaa'))
-  document.querySelectorAll('.cc-err').forEach(e => { e.className='cc-err'; e.textContent='' })
-  ccShowStep(1)
-  document.getElementById('cc-overlay').classList.add('open')
-}
-function closeCreateModal() {
-  document.getElementById('cc-overlay').classList.remove('open')
-}
-
-function selectSport(sport) {
-  _ccSport = sport
-  document.querySelectorAll('.cc-sport-btn').forEach(b => b.classList.remove('selected','selected-gaa'))
-  const btn = document.getElementById('sport-' + sport)
-  if (btn) btn.classList.add(sport === 'gaa' ? 'selected-gaa' : 'selected')
-  document.getElementById('cc-next-btn').disabled = false
-}
-
-function ccShowStep(n) {
-  _ccStep = n
-  for (let i = 1; i <= 3; i++) {
-    const panel = document.getElementById('cc-step-' + i)
-    if (panel) panel.style.display = i === n ? '' : 'none'
-  }
-  document.getElementById('cc-success').style.display = 'none'
-  document.getElementById('cc-footer').style.display = ''
-
-  // Step dots
-  for (let i = 1; i <= 3; i++) {
-    const dot = document.getElementById('step-dot-' + i)
-    if (!dot) continue
-    dot.classList.remove('active','done')
-    if (i < n)  dot.classList.add('done')
-    if (i === n) dot.classList.add('active')
-  }
-
-  // Header
-  const titles    = ['','Choose Your Sport','Club Details','Admin Account']
-  const subtitles = ['','What sport does your club play?','Tell us about your club','Create the admin login']
-  document.getElementById('cc-title').textContent    = titles[n]
-  document.getElementById('cc-subtitle').textContent = subtitles[n]
-
-  // Buttons
-  const backBtn = document.getElementById('cc-back-btn')
-  const nextBtn = document.getElementById('cc-next-btn')
-  backBtn.style.display = n > 1 ? '' : 'none'
-  nextBtn.textContent   = n === 3 ? '🚀 Create Club' : 'Continue →'
-  nextBtn.disabled      = n === 1 ? !_ccSport : false
-
-  if (n === 2) setTimeout(()=>document.getElementById('cc-club-name')?.focus(), 80)
-  if (n === 3) setTimeout(()=>document.getElementById('cc-admin-name')?.focus(), 80)
-}
-
-function ccBack() {
-  if (_ccStep > 1) ccShowStep(_ccStep - 1)
-}
-
-async function ccNext() {
-  if (_ccSaving) return
-  if (_ccStep === 1) {
-    if (!_ccSport) return
-    ccShowStep(2)
-  } else if (_ccStep === 2) {
-    const name   = document.getElementById('cc-club-name').value.trim()
-    const county = document.getElementById('cc-county').value
-    const err    = document.getElementById('cc-err-2')
-    if (!name)   { showCCErr(err, 'Please enter your club name.'); return }
-    if (!county) { showCCErr(err, 'Please select your county.'); return }
-    err.className = 'cc-err'; err.textContent = ''
-    ccShowStep(3)
-  } else if (_ccStep === 3) {
-    await ccSubmit()
-  }
-}
-
-function showCCErr(el, msg) {
-  el.textContent = msg
-  el.className   = 'cc-err show'
-}
-
-function toggleCCPw(inputId, btn) {
-  const inp = document.getElementById(inputId)
-  if (inp.type === 'password') { inp.type='text';  btn.textContent='Hide' }
-  else                          { inp.type='password'; btn.textContent='Show' }
-}
-
-async function checkEmailExists() {
-  const email = document.getElementById('cc-admin-email').value.trim()
-  if (!email || !email.includes('@')) return
-  const res  = await fetch(
-    `${SUPA_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id,full_name`,
-    { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
-  )
-  const data = await res.json()
-  const pwSection = document.getElementById('cc-pw-section')
-  const existingNote = document.getElementById('cc-existing-note')
-  const nameInput = document.getElementById('cc-admin-name')
-  if (Array.isArray(data) && data.length > 0) {
-    // Existing user — hide password fields, show note
-    if (pwSection)    pwSection.style.display = 'none'
-    if (existingNote) existingNote.style.display = ''
-    if (data[0].full_name && nameInput) nameInput.value = data[0].full_name
-  } else {
-    // New user — show password fields
-    if (pwSection)    pwSection.style.display = ''
-    if (existingNote) existingNote.style.display = 'none'
-  }
-}
-
-function slugify(str) {
-  return str.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
-}
-
-async function ccSubmit() {
-  const err       = document.getElementById('cc-err-3')
-  const adminName = document.getElementById('cc-admin-name').value.trim()
-  const email     = document.getElementById('cc-admin-email').value.trim()
-  const pass      = document.getElementById('cc-admin-pass').value
-  const pass2     = document.getElementById('cc-admin-pass2').value
-
-  if (!adminName)         { showCCErr(err, 'Please enter your full name.'); return }
-  if (!email || !email.includes('@')) { showCCErr(err, 'Please enter a valid email address.'); return }
-  const pwHidden = document.getElementById('cc-pw-section')?.style.display === 'none'
-  if (!pwHidden) {
-    if (pass.length < 8)  { showCCErr(err, 'Password must be at least 8 characters.'); return }
-    if (pass !== pass2)   { showCCErr(err, 'Passwords do not match.'); return }
-  }
-
-  err.className = 'cc-err'
-  _ccSaving = true
-  const nextBtn = document.getElementById('cc-next-btn')
-  nextBtn.textContent = 'Creating…'
-  nextBtn.disabled    = true
-
-  const clubName = document.getElementById('cc-club-name').value.trim()
-  const county   = document.getElementById('cc-county').value
-
-  try {
-    // 1. Check if this email already has an account in profiles
-    let userId, token, alreadyExists = false
-
-    const existingRes = await fetch(
-      `${SUPA_URL}/rest/v1/profiles?email=eq.${encodeURIComponent(email)}&select=id`,
-      { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
-    )
-    const existingData = await existingRes.json()
-
-    if (Array.isArray(existingData) && existingData.length > 0) {
-      // Email already has an account — just use their existing user ID
-      // No sign-in needed, we create the club and link it to them
-      alreadyExists = true
-      userId = existingData[0].id
-      token  = SUPA_KEY
-    } else {
-      // New user — create auth account
-      const signupRes = await fetch(`${SUPA_URL}/auth/v1/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'apikey': SUPA_KEY },
-        body: JSON.stringify({ email, password: pass, data: { full_name: adminName } })
-      })
-      const signupData = await signupRes.json()
-      if (signupData.error || (!signupData.user && !signupData.id)) {
-        const msg = signupData.msg || signupData.error?.message || signupData.error || 'Sign up failed. Please try again.'
-        showCCErr(err, msg)
-        nextBtn.textContent = '🚀 Create Club'
-        nextBtn.disabled    = false
-        _ccSaving = false
-        return
-      }
-      userId = signupData.user?.id || signupData.id
-      token  = signupData.session?.access_token || signupData.access_token || SUPA_KEY
-    }
-
-    // 2. Create the club record
-    // Use anon key as Authorization since new user may lack RLS insert rights
-    const clubSlug = slugify(clubName) + '-' + Math.random().toString(36).slice(2,6)
-    const clubRes  = await fetch(`${SUPA_URL}/rest/v1/clubs`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${SUPA_KEY}`,
-        'Prefer': 'return=representation',
-      },
-      body: JSON.stringify({
-        name:       clubName,
-        slug:       clubSlug,
-        sport_type: _ccSport,
-        location:   county + ', Ireland',
-        status:     'active',
-      })
-    })
-    const clubData = await clubRes.json()
-    if (!clubRes.ok) {
-      const detail = clubData?.message || clubData?.hint || clubData?.code || JSON.stringify(clubData)
-      throw new Error('Club creation failed: ' + detail)
-    }
-    const club = Array.isArray(clubData) ? clubData[0] : clubData
-    if (!club?.id) throw new Error('Failed to create club record — no ID returned.')
-
-    // 3. Create the admin profile
-    const profRes = await fetch(`${SUPA_URL}/rest/v1/profiles`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${SUPA_KEY}`,
-        'Prefer': 'return=minimal',
-      },
-      body: JSON.stringify({
-        id:         userId,
-        full_name:  adminName,
-        email:      email,
-        role:       'admin',
-        roles:      ['admin','player'],
-        status:     'active',
-        club_id:    club.id,
-        sport_type: _ccSport,
-      })
-    })
-    if (!profRes.ok) {
-      const profErr = await profRes.json().catch(()=>({}))
-      console.warn('[profile insert]', profErr)
-      // Non-fatal if profile already exists (auth trigger may have created it)
-    }
-
-    // 4. Add admin to user_clubs junction table
-    await fetch(`${SUPA_URL}/rest/v1/user_clubs`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${SUPA_KEY}`,
-        'Prefer': 'return=minimal',
-      },
-      body: JSON.stringify({
-        user_id:    userId,
-        club_id:    club.id,
-        role:       'admin',
-        roles:      ['admin','player'],
-        status:     'active',
-        sport_type: _ccSport,
-      })
-    }).catch(()=>{})
-
-    // 5. Create SMS settings row for the new club (non-fatal)
-    await fetch(`${SUPA_URL}/rest/v1/club_sms_settings`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${SUPA_KEY}`,
-        'Prefer': 'return=minimal',
-      },
-      body: JSON.stringify({ club_id: club.id })
-    }).catch(()=>{})
-
-    // Success!
-    document.getElementById('cc-steps').style.display  = 'none'
-    document.getElementById('cc-footer').style.display = 'none'
-    for (let i=1;i<=3;i++) { const p=document.getElementById('cc-step-'+i); if(p) p.style.display='none' }
-    document.getElementById('cc-success').style.display = ''
-    document.getElementById('cc-title').textContent    = '🎉 Welcome to MyClubHub!'
-    document.getElementById('cc-subtitle').textContent = clubName + ' · ' + county
-    const isNewUser = !alreadyExists
-    document.getElementById('cc-success-msg').textContent = isNewUser
-      ? `${clubName} is now live! We've sent a confirmation email to ${email}. Confirm your email then log in at app.myclubhub.ie to get started.`
-      : `${clubName} has been added to your account! Log in at app.myclubhub.ie — you'll see a club picker to switch between your clubs.`
-
-  } catch (e) {
-    showCCErr(err, e.message || 'Something went wrong. Please try again.')
-    nextBtn.textContent = '🚀 Create Club'
-    nextBtn.disabled    = false
-  }
-  _ccSaving = false
-}
-// Allow Enter key in create form
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal(); closeCreateModal() }
-  if (e.key === 'Enter' && document.getElementById('cc-overlay')?.classList.contains('open')) {
-    const nb = document.getElementById('cc-next-btn')
-    if (nb && !nb.disabled) ccNext()
-  }
+// ── INIT: apply saved club on page load ───────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  updateHeroCard(selectedClub)
 })
 
+// ── ESCAPE closes create modal ────────────────────────────────────────────────
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCreateModal() })
 </script>
 
 <!-- CREATE A CLUB MODAL -->
