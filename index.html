@@ -848,5 +848,127 @@ document.addEventListener('keydown', e => {
 })
 
 </script>
+
+<!-- CREATE A CLUB MODAL -->
+<div class="cc-overlay" id="cc-overlay" onclick="if(event.target===this)closeCreateModal()">
+  <div class="cc-modal" id="cc-modal">
+
+    <div class="cc-header">
+      <h2 id="cc-title">Create Your Club</h2>
+      <p id="cc-subtitle">Get your club on MyClubHub in minutes</p>
+    </div>
+
+    <div class="cc-steps" id="cc-steps">
+      <div class="cc-step-dot active" id="step-dot-1"><div class="cc-step-num">1</div><span>Sport</span></div>
+      <div class="cc-step-dot" id="step-dot-2"><div class="cc-step-num">2</div><span>Club</span></div>
+      <div class="cc-step-dot" id="step-dot-3"><div class="cc-step-num">3</div><span>Admin</span></div>
+    </div>
+
+    <!-- STEP 1: SPORT -->
+    <div id="cc-step-1" class="cc-body">
+      <p style="font-size:13px;color:var(--slate);margin:0 0 18px">What sport does your club play?</p>
+      <div class="cc-sport-grid">
+        <button class="cc-sport-btn" id="sport-handball" onclick="selectSport('handball')">
+          <span class="cc-sport-emoji">🤾</span>
+          <div class="cc-sport-name">Handball</div>
+          <div class="cc-sport-tag">Courts &amp; Alleys</div>
+        </button>
+        <button class="cc-sport-btn" id="sport-gaa" onclick="selectSport('gaa')">
+          <span class="cc-sport-emoji">🏈</span>
+          <div class="cc-sport-name">GAA Football</div>
+          <div class="cc-sport-tag">Pitches &amp; Teams</div>
+        </button>
+        <button class="cc-sport-btn" id="sport-hurling" onclick="selectSport('hurling')">
+          <span class="cc-sport-emoji">🏑</span>
+          <div class="cc-sport-name">Hurling</div>
+          <div class="cc-sport-tag">Pitches &amp; Teams</div>
+        </button>
+        <button class="cc-sport-btn" id="sport-other" onclick="selectSport('other')">
+          <span class="cc-sport-emoji">🏆</span>
+          <div class="cc-sport-name">Other</div>
+          <div class="cc-sport-tag">Any sport</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: CLUB DETAILS -->
+    <div id="cc-step-2" class="cc-body" style="display:none">
+      <div id="cc-err-2" class="cc-err"></div>
+      <div class="cc-field">
+        <label class="cc-label">Club Name</label>
+        <input class="cc-input" id="cc-club-name" type="text" placeholder="e.g. Monaghan Handball Club" maxlength="60"/>
+      </div>
+      <div class="cc-field">
+        <label class="cc-label">County / Location</label>
+        <select class="cc-input" id="cc-county">
+          <option value="">Select county&hellip;</option>
+          <option>Antrim</option><option>Armagh</option><option>Carlow</option><option>Cavan</option>
+          <option>Clare</option><option>Cork</option><option>Derry</option><option>Donegal</option>
+          <option>Down</option><option>Dublin</option><option>Fermanagh</option><option>Galway</option>
+          <option>Kerry</option><option>Kildare</option><option>Kilkenny</option><option>Laois</option>
+          <option>Leitrim</option><option>Limerick</option><option>Longford</option><option>Louth</option>
+          <option>Mayo</option><option>Meath</option><option>Monaghan</option><option>Offaly</option>
+          <option>Roscommon</option><option>Sligo</option><option>Tipperary</option><option>Tyrone</option>
+          <option>Waterford</option><option>Westmeath</option><option>Wexford</option><option>Wicklow</option>
+        </select>
+      </div>
+      <div class="cc-field">
+        <label class="cc-label">Approximate Members <span style="color:var(--slate2);font-weight:400">(optional)</span></label>
+        <select class="cc-input" id="cc-size">
+          <option value="">Select&hellip;</option>
+          <option value="1-20">1&ndash;20</option>
+          <option value="21-50">21&ndash;50</option>
+          <option value="51-100">51&ndash;100</option>
+          <option value="100+">100+</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STEP 3: ADMIN ACCOUNT -->
+    <div id="cc-step-3" class="cc-body" style="display:none">
+      <div id="cc-err-3" class="cc-err"></div>
+      <p style="font-size:12px;color:var(--slate);margin:0 0 16px">This will be the club admin account.</p>
+      <div class="cc-field">
+        <label class="cc-label">Your Full Name</label>
+        <input class="cc-input" id="cc-admin-name" type="text" placeholder="John Murphy"/>
+      </div>
+      <div class="cc-field">
+        <label class="cc-label">Email Address</label>
+        <input class="cc-input" id="cc-admin-email" type="email" placeholder="john@yourclub.ie"/>
+      </div>
+      <div class="cc-field">
+        <label class="cc-label">Password</label>
+        <div class="cc-pw-wrap">
+          <input class="cc-input" id="cc-admin-pass" type="password" placeholder="Min. 8 characters" style="padding-right:60px"/>
+          <button class="cc-pw-toggle" type="button" onclick="toggleCCPw('cc-admin-pass',this)">Show</button>
+        </div>
+      </div>
+      <div class="cc-field">
+        <label class="cc-label">Confirm Password</label>
+        <div class="cc-pw-wrap">
+          <input class="cc-input" id="cc-admin-pass2" type="password" placeholder="Repeat password" style="padding-right:60px"/>
+          <button class="cc-pw-toggle" type="button" onclick="toggleCCPw('cc-admin-pass2',this)">Show</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="cc-success" style="display:none">
+      <div class="cc-success">
+        <div class="cc-success-icon">&#x1F389;</div>
+        <h3>Club Created!</h3>
+        <p id="cc-success-msg">Your club is live. Check your email to confirm your account, then log in at app.myclubhub.ie.</p>
+        <button class="cc-btn-pri" style="width:100%;margin-top:8px" onclick="closeCreateModal()">Got it &rarr;</button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="cc-footer" id="cc-footer">
+      <button class="cc-btn-sec" id="cc-back-btn" onclick="ccBack()" style="display:none">&larr; Back</button>
+      <button class="cc-btn-pri" id="cc-next-btn" onclick="ccNext()" disabled>Continue &rarr;</button>
+    </div>
+
+  </div>
+</div>
 </body>
 </html>
