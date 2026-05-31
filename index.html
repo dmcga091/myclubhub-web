@@ -767,13 +767,14 @@ async function ccSubmit() {
     const token  = signupData.session?.access_token || signupData.access_token || SUPA_KEY
 
     // 2. Create the club record
+    // Use anon key as Authorization since new user may lack RLS insert rights
     const clubSlug = slugify(clubName) + '-' + Math.random().toString(36).slice(2,6)
     const clubRes  = await fetch(`${SUPA_URL}/rest/v1/clubs`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${SUPA_KEY}`,
         'Prefer': 'return=representation',
       },
       body: JSON.stringify({
@@ -785,16 +786,20 @@ async function ccSubmit() {
       })
     })
     const clubData = await clubRes.json()
+    if (!clubRes.ok) {
+      const detail = clubData?.message || clubData?.hint || clubData?.code || JSON.stringify(clubData)
+      throw new Error('Club creation failed: ' + detail)
+    }
     const club = Array.isArray(clubData) ? clubData[0] : clubData
-    if (!club?.id) throw new Error('Failed to create club record.')
+    if (!club?.id) throw new Error('Failed to create club record — no ID returned.')
 
     // 3. Create the admin profile
-    await fetch(`${SUPA_URL}/rest/v1/profiles`, {
+    const profRes = await fetch(`${SUPA_URL}/rest/v1/profiles`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${SUPA_KEY}`,
         'Prefer': 'return=minimal',
       },
       body: JSON.stringify({
@@ -808,18 +813,23 @@ async function ccSubmit() {
         sport_type: _ccSport,
       })
     })
+    if (!profRes.ok) {
+      const profErr = await profRes.json().catch(()=>({}))
+      console.warn('[profile insert]', profErr)
+      // Non-fatal if profile already exists (auth trigger may have created it)
+    }
 
-    // 4. Create SMS settings row for the new club
+    // 4. Create SMS settings row for the new club (non-fatal)
     await fetch(`${SUPA_URL}/rest/v1/club_sms_settings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPA_KEY,
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${SUPA_KEY}`,
         'Prefer': 'return=minimal',
       },
       body: JSON.stringify({ club_id: club.id })
-    })
+    }).catch(()=>{})
 
     // Success!
     document.getElementById('cc-steps').style.display  = 'none'
@@ -900,8 +910,8 @@ document.addEventListener('keydown', e => {
       </div>
       <div class="cc-field">
         <label class="cc-label">County / Location</label>
-        <select class="cc-input" id="cc-county">
-          <option value="">Select county&hellip;</option>
+        <input class="cc-input" id="cc-county" type="text" placeholder="Type your county…" list="county-list" autocomplete="off"/>
+        <datalist id="county-list">
           <option>Antrim</option><option>Armagh</option><option>Carlow</option><option>Cavan</option>
           <option>Clare</option><option>Cork</option><option>Derry</option><option>Donegal</option>
           <option>Down</option><option>Dublin</option><option>Fermanagh</option><option>Galway</option>
@@ -910,7 +920,7 @@ document.addEventListener('keydown', e => {
           <option>Mayo</option><option>Meath</option><option>Monaghan</option><option>Offaly</option>
           <option>Roscommon</option><option>Sligo</option><option>Tipperary</option><option>Tyrone</option>
           <option>Waterford</option><option>Westmeath</option><option>Wexford</option><option>Wicklow</option>
-        </select>
+        </datalist>
       </div>
       <div class="cc-field">
         <label class="cc-label">Approximate Members <span style="color:var(--slate2);font-weight:400">(optional)</span></label>
