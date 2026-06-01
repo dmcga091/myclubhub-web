@@ -564,14 +564,17 @@ function renderActiveClubs(clubs) {
 // ── LOAD CLUBS FROM SUPABASE ──────────────────────────────────────────────────
 async function loadClubs() {
   try {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 8000)
     const res  = await fetch(
       `${SUPA_URL}/rest/v1/clubs?select=id,name,slug,sport_type,location,status&order=created_at`,
-      { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` } }
+      { headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}` }, signal: controller.signal }
     )
+    clearTimeout(timeout)
+    if (!res.ok) { console.warn('[loadClubs] HTTP', res.status); return }
     const data = await res.json()
-    console.log('[loadClubs] response:', data)
     const active = Array.isArray(data) ? data.filter(c => c.status === 'active') : []
-    if (!active.length) { console.warn('[loadClubs] no active clubs found'); return }
+    if (!active.length) { return }
     const allData = active
     allClubs = allData
     renderClubsList(allData)
