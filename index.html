@@ -451,6 +451,14 @@ let selectedClub = null   // set after clubs load
     if (!stored) return
     const s = JSON.parse(stored)
     if (s && s.access_token && s.expires_at && (s.expires_at * 1000) > Date.now() + 60000) {
+      // Copy the currently selected club into pending BEFORE redirecting
+      // This ensures AuthCallback always switches to whichever club the user last selected
+      const selId    = localStorage.getItem('selected_club_id')
+      const selSport = localStorage.getItem('pending_sport') || 'handball'
+      if (selId) {
+        localStorage.setItem('pending_club_id', selId)
+        // Sport will be read from DB by AuthCallback if not set
+      }
       window.location.replace('https://app.myclubhub.ie/auth')
     } else {
       localStorage.removeItem(LSKEY)
