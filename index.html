@@ -608,8 +608,9 @@ async function goLogin(emailId, passId, btnId, errId) {
       return
     }
     setCrossDomainSession(data)
-    // Store selected club sport so AuthCallback routes correctly
-    localStorage.setItem('pending_sport', selectedClub?.sport_type || 'handball')
+    // Store selected club so AuthCallback routes and loads correctly
+    localStorage.setItem('pending_sport',   selectedClub?.sport_type || 'handball')
+    localStorage.setItem('pending_club_id', selectedClub?.id || '')
     const hash = `access_token=${encodeURIComponent(data.access_token)}&refresh_token=${encodeURIComponent(data.refresh_token)}&expires_at=${data.expires_at}&token_type=bearer`
     window.location.replace(`https://app.myclubhub.ie/auth#${hash}`)
   } catch(e) {
