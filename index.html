@@ -484,7 +484,10 @@ function setCrossDomainSession(data) {
 // ── UPDATE HERO LOGIN CARD ─────────────────────────────────────────────────────
 function updateHeroCard(club) {
   selectedClub = club
-  localStorage.setItem('selected_club_id', club.id)
+  localStorage.setItem('selected_club_id',  club.id)
+  // Store immediately so AuthCallback knows which club even if already logged in
+  localStorage.setItem('pending_club_id',   club.id)
+  localStorage.setItem('pending_sport',     club.sport_type || 'handball')
 
   const meta   = SPORT_META[club.sport_type] || SPORT_META.other
   const nameEl   = document.getElementById('h-club-name')
