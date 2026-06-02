@@ -451,12 +451,11 @@ let selectedClub = null   // set after clubs load
     if (!stored) return
     const s = JSON.parse(stored)
     if (s && s.access_token && s.expires_at && (s.expires_at * 1000) > Date.now() + 60000) {
-      // Copy currently selected club into pending BEFORE redirecting
-      // Only override pending_club_id if it's not already freshly set
-      const selId = localStorage.getItem('selected_club_id')
-      if (selId) localStorage.setItem('pending_club_id', selId)
-      console.log('[checkExisting] Auto-redirecting with pending_club_id:', localStorage.getItem('pending_club_id'))
-      window.location.replace('https://app.myclubhub.ie/auth')
+      // Auto-redirect goes directly to dashboard — uses profile.club_id from DB
+      // Never touch pending_club_id here — that's only set by clicking Login
+      const sport = localStorage.getItem('active_sport_type') || 'handball'
+      const dest  = sport === 'gaa' ? 'https://app.myclubhub.ie/gaa' : 'https://app.myclubhub.ie/dashboard'
+      window.location.replace(dest)
     } else {
       localStorage.removeItem(LSKEY)
       clearCookies()
@@ -656,14 +655,6 @@ function filterClubs(v) {
 
 // ── INIT: apply saved club on page load ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Pre-set pending_club_id from localStorage immediately
-  // so it's ready even before loadClubs() finishes
-  const savedId    = localStorage.getItem('selected_club_id')
-  const savedSport = localStorage.getItem('active_sport_type') || 'handball'
-  if (savedId) {
-    localStorage.setItem('pending_club_id', savedId)
-    localStorage.setItem('pending_sport',   savedSport)
-  }
   loadClubs()
 })
 
