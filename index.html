@@ -451,14 +451,11 @@ let selectedClub = null   // set after clubs load
     if (!stored) return
     const s = JSON.parse(stored)
     if (s && s.access_token && s.expires_at && (s.expires_at * 1000) > Date.now() + 60000) {
-      // Copy the currently selected club into pending BEFORE redirecting
-      // This ensures AuthCallback always switches to whichever club the user last selected
-      const selId    = localStorage.getItem('selected_club_id')
-      const selSport = localStorage.getItem('pending_sport') || 'handball'
-      if (selId) {
-        localStorage.setItem('pending_club_id', selId)
-        // Sport will be read from DB by AuthCallback if not set
-      }
+      // Copy currently selected club into pending BEFORE redirecting
+      // Only override pending_club_id if it's not already freshly set
+      const selId = localStorage.getItem('selected_club_id')
+      if (selId) localStorage.setItem('pending_club_id', selId)
+      console.log('[checkExisting] Auto-redirecting with pending_club_id:', localStorage.getItem('pending_club_id'))
       window.location.replace('https://app.myclubhub.ie/auth')
     } else {
       localStorage.removeItem(LSKEY)
@@ -622,9 +619,14 @@ async function goLogin(emailId, passId, btnId, errId) {
       return
     }
     setCrossDomainSession(data)
-    // Store selected club so AuthCallback routes and loads correctly
-    localStorage.setItem('pending_sport',   selectedClub?.sport_type || 'handball')
-    localStorage.setItem('pending_club_id', selectedClub?.id || '')
+    // Always get the best club_id available — never store empty string
+    const _clubId    = selectedClub?.id || localStorage.getItem('selected_club_id') || ''
+    const _clubSport = selectedClub?.sport_type || localStorage.getItem('active_sport_type') || 'handball'
+    console.log('[Login] Target Club ID from Form:', _clubId)
+    console.log('[Login] Club Sport:', _clubSport)
+    console.log('[Login] User email:', email)
+    if (_clubId) localStorage.setItem('pending_club_id', _clubId)
+    if (_clubSport) localStorage.setItem('pending_sport', _clubSport)
     const hash = `access_token=${encodeURIComponent(data.access_token)}&refresh_token=${encodeURIComponent(data.refresh_token)}&expires_at=${data.expires_at}&token_type=bearer`
     window.location.replace(`https://app.myclubhub.ie/auth#${hash}`)
   } catch(e) {
