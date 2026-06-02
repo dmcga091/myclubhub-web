@@ -444,19 +444,14 @@ let selectedClub = null   // set after clubs load
 
 // ── REDIRECT LOOP PREVENTION ──────────────────────────────────────────────────
 ;(function checkExisting(){
+  // No auto-redirect — users always select their club and click Login
+  // This ensures AuthCallback always runs and profile.club_id is always correct
   try {
-    const hasCookie = document.cookie.split(';').some(c => c.trim().startsWith('mch_access=') && c.trim().length > 'mch_access='.length)
-    if (!hasCookie) { localStorage.removeItem(LSKEY); return }
     const stored = localStorage.getItem(LSKEY)
     if (!stored) return
     const s = JSON.parse(stored)
-    if (s && s.access_token && s.expires_at && (s.expires_at * 1000) > Date.now() + 60000) {
-      // Auto-redirect goes directly to dashboard — uses profile.club_id from DB
-      // Never touch pending_club_id here — that's only set by clicking Login
-      const sport = localStorage.getItem('active_sport_type') || 'handball'
-      const dest  = sport === 'gaa' ? 'https://app.myclubhub.ie/gaa' : 'https://app.myclubhub.ie/dashboard'
-      window.location.replace(dest)
-    } else {
+    // Only clear if token is expired — never redirect
+    if (!s || !s.access_token || !s.expires_at || (s.expires_at * 1000) < Date.now()) {
       localStorage.removeItem(LSKEY)
       clearCookies()
     }
