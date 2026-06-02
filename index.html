@@ -605,6 +605,17 @@ async function goLogin(emailId, passId, btnId, errId) {
   btn.disabled = true
   err.style.display = 'none'
   try {
+    // Sign out any existing session first so AuthCallback always runs fresh
+    await fetch(`${SUPA_URL}/auth/v1/logout`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'apikey': SUPA_KEY,
+                 'Authorization': `Bearer ${localStorage.getItem(LSKEY) ? JSON.parse(localStorage.getItem(LSKEY)||'{}').access_token || SUPA_KEY : SUPA_KEY}` }
+    }).catch(()=>{})
+    localStorage.removeItem(LSKEY)
+    const cookieExp = 'expires=Thu, 01 Jan 1970 00:00:00 GMT;domain=.myclubhub.ie;path=/;SameSite=Lax;Secure'
+    document.cookie = `mch_access=;${cookieExp}`
+    document.cookie = `mch_refresh=;${cookieExp}`
+
     const res = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`, {
       method: 'POST',
       headers: {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`},
