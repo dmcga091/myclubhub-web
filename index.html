@@ -624,16 +624,15 @@ async function goLogin(emailId, passId, btnId, errId) {
       return
     }
     setCrossDomainSession(data)
-    // Always get the best club_id available — never store empty string
+    // Pass club_id in URL — localStorage is domain-scoped so can't cross myclubhub.ie → app.myclubhub.ie
     const _clubId    = selectedClub?.id || localStorage.getItem('selected_club_id') || ''
     const _clubSport = selectedClub?.sport_type || localStorage.getItem('active_sport_type') || 'handball'
     console.log('[Login] Target Club ID from Form:', _clubId)
     console.log('[Login] Club Sport:', _clubSport)
     console.log('[Login] User email:', email)
-    if (_clubId) localStorage.setItem('pending_club_id', _clubId)
-    if (_clubSport) localStorage.setItem('pending_sport', _clubSport)
     const hash = `access_token=${encodeURIComponent(data.access_token)}&refresh_token=${encodeURIComponent(data.refresh_token)}&expires_at=${data.expires_at}&token_type=bearer`
-    window.location.replace(`https://app.myclubhub.ie/auth#${hash}`)
+    const clubParam = _clubId ? `?club=${encodeURIComponent(_clubId)}` : ''
+    window.location.replace(`https://app.myclubhub.ie/auth${clubParam}#${hash}`)
   } catch(e) {
     showErr(err, 'Connection error. Please try again.')
     btn.textContent = selectedClub.btnLabel + ' →'
