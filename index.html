@@ -849,11 +849,14 @@ async function ccSubmit() {
     if (!club?.id) throw new Error('No club ID returned.')
 
     // Create/update profile
-    await fetch(`${SUPA_URL}/rest/v1/profiles`, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal' },
-      body: JSON.stringify({ id:userId, full_name:adminName, email, role:'admin', roles:['admin','player'], status:'active', club_id:club.id, sport_type:_ccSport })
-    }).catch(()=>{})
+    // Only create profile if it doesn't exist — NEVER overwrite existing club_id
+    if(!alreadyExists) {
+      await fetch(`${SUPA_URL}/rest/v1/profiles`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify({ id:userId, full_name:adminName, email, role:'admin', roles:['admin','player'], status:'active', club_id:club.id, sport_type:_ccSport })
+      }).catch(()=>{})
+    }
 
     // Add to user_clubs
     await fetch(`${SUPA_URL}/rest/v1/user_clubs`, {
