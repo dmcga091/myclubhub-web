@@ -268,24 +268,16 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
 
   <div class="hero-right">
     <div class="login-card">
-      <div class="lc-head">
-        <div class="lc-icon" id="h-icon-wrap" style="background:#2563EB">
-          <svg width="20" height="20" viewBox="0 0 38 38" fill="none">
-            <path d="M19 3L4 9.5V20C4 28.2 10.8 35.4 19 37C27.2 35.4 34 28.2 34 20V9.5L19 3Z" fill="#1a3a6e" stroke="#60a5fa" stroke-width="1.4"/>
-            <path d="M13 19.5l4 4 8-8" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
+      <div class="lc-head" style="justify-content:center;text-align:center;padding:20px 22px">
         <div>
-          <div class="lc-name" id="h-club-name">Corduff Handball Club</div>
-          <div class="lc-sub" id="h-club-loc">Monaghan</div>
-          <div style="font-size:10px;color:var(--blue2);margin-top:2px" id="h-sport-tag">🤾 Handball</div>
+          <div class="lc-name" style="font-size:17px">Sign in to MyClubHub</div>
+          <div class="lc-sub">Enter your email and password to continue</div>
         </div>
-        <div class="live-badge"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>LIVE</div>
       </div>
       <div class="lc-body">
         <div id="h-err" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:7px;padding:9px 13px;font-size:13px;margin-bottom:12px"></div>
         <div class="f-group">
-          <label class="f-label">Email address</label>
+          <label class="f-label">Email Address</label>
           <input class="f-input" type="email" placeholder="your@email.com" id="h-email" onkeydown="if(event.key==='Enter')goLoginHero()"/>
         </div>
         <div class="f-group">
@@ -293,29 +285,14 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
           <input class="f-input" type="password" placeholder="••••••••" id="h-pass" onkeydown="if(event.key==='Enter')goLoginHero()"/>
         </div>
         <div class="f-forgot">Forgot password?</div>
-        <button class="btn-login" id="h-btn" onclick="goLoginHero()">Login to Corduff &rarr;</button>
+        <button class="btn-login" id="h-btn" onclick="goLoginHero()">Sign In &rarr;</button>
       </div>
-      <div class="lc-foot">Not a member? <a href="#">Contact your club admin</a></div>
+      <div class="lc-foot">New club? <a href="#" onclick="openCreateClub();return false">Create a Club</a></div>
     </div>
   </div>
 </div>
 
-<!-- FIND YOUR CLUB -->
-<div class="find-club" id="clubs">
-  <p class="section-label">Club access</p>
-  <h2 class="section-title">Find Your Club</h2>
-  <div class="search-row">
-    <input class="search-input" type="text" placeholder="Search club name&hellip;" oninput="filterClubs(this.value)"/>
-    <button class="search-btn">Search</button>
-  </div>
-  <div class="clubs-list" id="clubs-list">
-
-    <!-- Corduff Handball Club -->
-    <!-- Clubs loaded dynamically by loadClubs() -->
-
-  </div>
-  <div class="coming-soon">More clubs coming soon &mdash; <a href="#" style="color:var(--blue2);text-decoration:none">register your club</a></div>
-</div>
+<!-- Find Your Club removed - login-first flow -->
 
 <!-- CURRENTLY LIVE -->
 <div class="live-section">
@@ -610,6 +587,9 @@ async function goLogin(emailId, passId, btnId, errId) {
     const cookieExp = 'expires=Thu, 01 Jan 1970 00:00:00 GMT;domain=.myclubhub.ie;path=/;SameSite=Lax;Secure'
     document.cookie = `mch_access=;${cookieExp}`
     document.cookie = `mch_refresh=;${cookieExp}`
+    // Clear any stale club selection
+    localStorage.removeItem('selected_club_id')
+    localStorage.removeItem('pending_club_id')
 
     const res = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`, {
       method: 'POST',
@@ -624,15 +604,9 @@ async function goLogin(emailId, passId, btnId, errId) {
       return
     }
     setCrossDomainSession(data)
-    // Pass club_id in URL — localStorage is domain-scoped so can't cross myclubhub.ie → app.myclubhub.ie
-    const _clubId    = selectedClub?.id || localStorage.getItem('selected_club_id') || ''
-    const _clubSport = selectedClub?.sport_type || localStorage.getItem('active_sport_type') || 'handball'
-    console.log('[Login] Target Club ID from Form:', _clubId)
-    console.log('[Login] Club Sport:', _clubSport)
-    console.log('[Login] User email:', email)
+    // Login-first flow — AuthCallback handles all club routing automatically
     const hash = `access_token=${encodeURIComponent(data.access_token)}&refresh_token=${encodeURIComponent(data.refresh_token)}&expires_at=${data.expires_at}&token_type=bearer`
-    const clubParam = _clubId ? `?club=${encodeURIComponent(_clubId)}` : ''
-    window.location.replace(`https://app.myclubhub.ie/auth${clubParam}#${hash}`)
+    window.location.replace(`https://app.myclubhub.ie/auth#${hash}`)
   } catch(e) {
     showErr(err, 'Connection error. Please try again.')
     btn.textContent = selectedClub.btnLabel + ' →'
