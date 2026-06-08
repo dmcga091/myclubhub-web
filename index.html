@@ -574,7 +574,7 @@ async function goLogin(emailId, passId, btnId, errId) {
     const data = await res.json()
     if (!res.ok || data.error) {
       showErr(err, data.error_description || data.msg || 'Invalid email or password.')
-      btn.textContent = selectedClub.btnLabel + ' →'
+      btn.textContent = 'Sign In →'
       btn.disabled = false
       return
     }
