@@ -460,32 +460,7 @@ function setCrossDomainSession(data) {
 // ── UPDATE HERO LOGIN CARD ─────────────────────────────────────────────────────
 function updateHeroCard(club) {
   selectedClub = club
-  localStorage.setItem('selected_club_id',  club.id)
-  // Store immediately so AuthCallback knows which club even if already logged in
-  localStorage.setItem('pending_club_id',   club.id)
-  localStorage.setItem('pending_sport',     club.sport_type || 'handball')
-
-  const meta   = SPORT_META[club.sport_type] || SPORT_META.other
-  const nameEl   = document.getElementById('h-club-name')
-  const locEl    = document.getElementById('h-club-loc')
-  const sportEl  = document.getElementById('h-sport-tag')
-  const btnEl    = document.getElementById('h-btn')
-  const iconWrap = document.getElementById('h-icon-wrap')
-
-  if (nameEl)   nameEl.textContent   = club.name
-  if (locEl)    locEl.textContent    = club.location || ''
-  if (sportEl)  sportEl.textContent  = meta.emoji + ' ' + meta.label
-  if (btnEl) {
-    btnEl.textContent      = 'Login to ' + club.name.split(' ')[0] + ' \u2192'
-    btnEl.style.background = meta.color
-  }
-  if (iconWrap) iconWrap.style.background = meta.color
-
-  document.querySelectorAll('.club-row').forEach(row => {
-    const isActive = row.dataset.clubId === club.id
-    row.style.borderColor = isActive ? meta.color : ''
-    row.style.background  = isActive ? meta.color + '11' : ''
-  })
+  // No longer update button text or UI - login-first flow
 }
 
 // ── RENDER CLUBS LIST ─────────────────────────────────────────────────────────
@@ -634,7 +609,7 @@ function filterClubs(v) {
 
 // ── INIT: apply saved club on page load ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  loadClubs()
+  // loadClubs removed - login-first flow, no club selection needed
 })
 
 
