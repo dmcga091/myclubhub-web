@@ -26,8 +26,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .logo-text{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--white);letter-spacing:.5px}
 .logo-text em{font-style:normal;color:var(--blue2)}
 .nav-right{display:flex;gap:10px;align-items:center}
-.nav-create{font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;background:none;color:var(--slate);border:1px solid var(--border);padding:7px 18px;border-radius:6px;cursor:pointer;transition:all .2s}
-.nav-create:hover{color:var(--white);border-color:rgba(255,255,255,.2)}
+.nav-contact,.nav-create{font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;background:none;color:var(--slate);border:1px solid var(--border);padding:7px 18px;border-radius:6px;cursor:pointer;transition:all .2s;text-decoration:none}
+.nav-contact:hover,.nav-create:hover{color:var(--white);border-color:rgba(255,255,255,.2)}
 .nav-login{font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;background:var(--blue);color:var(--white);border:none;padding:8px 20px;border-radius:6px;cursor:pointer;transition:background .2s}
 .nav-login:hover{background:var(--blue2)}
 
@@ -147,14 +147,20 @@ h1 em{font-style:normal;color:var(--blue2)}
 .p-feats{list-style:none;margin-bottom:24px;display:flex;flex-direction:column;gap:9px}
 .p-feats li{font-size:13px;color:var(--slate);display:flex;align-items:flex-start;gap:7px}
 .p-feats li::before{content:'✔';color:var(--green);font-weight:700;font-size:12px;margin-top:1px;flex-shrink:0}
-.p-cta{width:100%;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;padding:11px;border-radius:7px;cursor:pointer;transition:all .2s;background:none;color:var(--slate);border:1px solid var(--border)}
+.p-cta{display:block;text-align:center;text-decoration:none;width:100%;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;padding:11px;border-radius:7px;cursor:pointer;transition:all .2s;background:none;color:var(--slate);border:1px solid var(--border)}
 .p-cta:hover{color:var(--white);border-color:rgba(255,255,255,.2)}
 .p-card.featured .p-cta{background:var(--blue);color:#fff;border-color:var(--blue)}
 .p-card.featured .p-cta:hover{background:var(--blue2)}
+.contact-note{margin-top:24px;padding:18px 20px;border:1px solid rgba(28,110,243,.25);border-radius:12px;background:rgba(28,110,243,.08);color:var(--slate);font-size:14px;line-height:1.5}
+.contact-note strong{color:var(--white)}
+.contact-note a{color:var(--blue2);font-weight:700;text-decoration:none}
+.contact-note a:hover{text-decoration:underline}
 
 /* FOOTER */
 footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
 .f-copy{font-size:12px;color:var(--slate2)}
+.f-copy a{color:var(--blue2);text-decoration:none}
+.f-copy a:hover{text-decoration:underline}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center;padding:24px}
@@ -185,6 +191,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
 
 @media(max-width:768px){
   nav{padding:0 16px}
+  .nav-contact{display:none}
   .hero{grid-template-columns:1fr;padding:80px 16px 36px;gap:32px;min-height:auto}
   .find-club,.overview,.sports-wrap,.live-section,.pricing-wrap{padding:40px 16px}
   footer{padding:20px 16px;flex-direction:column;gap:8px;align-items:flex-start}
@@ -249,6 +256,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
     <span class="logo-text">My<em>Club</em>Hub</span>
   </a>
   <div class="nav-right">
+    <a class="nav-contact" href="mailto:myclubhub@yahoo.com">Contact</a>
     <button class="nav-create" onclick="openCreateModal()">Create a Club</button>
     <button class="nav-login" onclick="window.scrollTo({top:0,behavior:'smooth'})">Login</button>
   </div>
@@ -338,31 +346,35 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
 <!-- PRICING -->
 <div class="pricing-wrap" id="pricing">
   <div class="pricing-inner">
-    <p class="section-label">Simple pricing</p>
-    <h2 class="section-title">Fair pricing. No surprises.</h2>
+    <p class="section-label">Free trial</p>
+    <h2 class="section-title">Try MyClubHub free for 60 days.</h2>
     <div class="pricing-grid">
       <div class="p-card">
         <p class="p-tier">Trial</p>
         <p class="p-price"><sup>&euro;</sup>0</p>
-        <p class="p-period">Free for 30 days &middot; no card needed</p>
-        <ul class="p-feats"><li>Up to 20 players</li><li>1 league &amp; competition</li><li>Court/pitch booking calendar</li><li>Email notifications</li></ul>
-        <button class="p-cta" onclick="openCreateModal()">Start free trial</button>
+        <p class="p-period">Free for 60 days</p>
+        <ul class="p-feats"><li>Set up your club</li><li>Try bookings, leagues and competitions</li><li>Invite members and admins</li><li>See if MyClubHub fits your club</li></ul>
+        <button class="p-cta" onclick="openCreateModal()">Start 60-day trial</button>
       </div>
       <div class="p-card featured">
-        <div class="p-badge">Most popular</div>
+        <div class="p-badge">After trial</div>
         <p class="p-tier">Club</p>
-        <p class="p-price"><sup>&euro;</sup>5</p>
-        <p class="p-period">per active player &middot; per year</p>
-        <ul class="p-feats"><li>Unlimited players</li><li>Unlimited leagues &amp; groups</li><li>Cup, Shield &amp; custom knockouts</li><li>SMS + email + calendar invites</li><li>Multi-court/pitch management</li><li>Full results history</li></ul>
-        <button class="p-cta" onclick="openCreateModal()">Get started</button>
+        <p class="p-price" style="font-size:34px;padding-top:8px">Contact us</p>
+        <p class="p-period">Pricing depends on club setup and features</p>
+        <ul class="p-feats"><li>Unlimited leagues &amp; groups</li><li>Cup, Shield &amp; custom knockouts</li><li>Bookings and facility management</li><li>Email, SMS and push notifications</li><li>Member and role management</li><li>Full results history</li></ul>
+        <a class="p-cta" href="mailto:myclubhub@yahoo.com">Email us</a>
       </div>
       <div class="p-card">
         <p class="p-tier">Network</p>
         <p class="p-price" style="font-size:26px;padding-top:12px">Contact<br>us</p>
         <p class="p-period">Governing bodies &amp; multi-club networks</p>
-        <ul class="p-feats"><li>Multiple clubs</li><li>Cross-club leagues</li><li>National rankings</li><li>Dedicated support</li></ul>
-        <button class="p-cta">Contact us</button>
+        <ul class="p-feats"><li>Multiple clubs</li><li>Cross-club leagues</li><li>Shared competitions</li><li>Dedicated setup support</li></ul>
+        <a class="p-cta" href="mailto:myclubhub@yahoo.com">Contact us</a>
       </div>
+    </div>
+    <div class="contact-note">
+      <strong>Questions or pricing help?</strong>
+      Email <a href="mailto:myclubhub@yahoo.com">myclubhub@yahoo.com</a> and we will help you choose the right setup for your club.
     </div>
   </div>
 </div>
@@ -376,7 +388,7 @@ footer{padding:28px 40px;border-top:1px solid var(--border);display:flex;align-i
     </svg>
     <span class="logo-text" style="font-size:17px">My<em>Club</em>Hub</span>
   </a>
-  <p class="f-copy">&copy; 2026 MyClubHub. Built in Ireland.</p>
+  <p class="f-copy">Contact: <a href="mailto:myclubhub@yahoo.com">myclubhub@yahoo.com</a> &middot; &copy; 2026 MyClubHub. Built in Ireland.</p>
 </footer>
 
 <!-- MODAL -->
