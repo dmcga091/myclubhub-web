@@ -1,0 +1,24 @@
+{
+  "redirects": [
+    {
+      "source": "/register",
+      "destination": "https://app.myclubhub.ie/register",
+      "permanent": false
+    },
+    {
+      "source": "/club-setup",
+      "destination": "https://app.myclubhub.ie/club-setup",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "destination": "https://app.myclubhub.ie/login",
+      "permanent": false
+    },
+    {
+      "source": "/login",
+      "destination": "https://app.myclubhub.ie/login",
+      "permanent": false
+    }
+  ]
+}
